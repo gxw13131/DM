@@ -4,7 +4,7 @@
 !     
       use main
 !
-      open (4,file='euler.in',status='unknown')
+      open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',status='unknown')
 !
 !     read in main integer/logical control variables
 !     ----------------------------------------------
@@ -48,7 +48,7 @@
 !     read grids 
 !     ----------
 !
-        open (5,file='grid.in',status='unknown')
+        open (5,file='D:\\CFD_DM\\DM\\Input\\grid.in',status='unknown')
         read(5,*) imc,jmc
         ib=3
         jb=3
@@ -210,7 +210,7 @@
       do  j=jb,jm
              read(5) vx(i,j),vy(i,j)&
      &               ,p(i,j),rho(i,j)&
-     &               ,vmul(i,j),vmu(i,j)&
+     &               ,Mu_L(i,j),Mu_T(i,j)&
      &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
      &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
      
@@ -222,9 +222,9 @@
       do i=ib,im-1
       do j=jb,jm-1
       temini=T_Inlet*T_ref
-      vmul(i,j)=1.458*abs(temini)**1.5/(temini+110.4)*1.0d-6/&
+      Mu_L(i,j)=1.458*abs(temini)**1.5/(temini+110.4)*1.0d-6/&
          (Rho_ref*V_ref*L_ref)
-      vmu(i,j)=vmul(i,j)
+     Mu_E(i,j)=Mu_L(i,j)
       end do
       end do
       

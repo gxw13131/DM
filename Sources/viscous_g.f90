@@ -1,8 +1,11 @@
 subroutine vis_Flux
+    use main 
     ! compute the viscous flux 
     ! add to SumFlux()
     real*8 :: Tau_xx,Tau_xy,Tau_yy !stress
-    use main   
+    real*8 :: LFlux_rho_vx,LFlux_rho_vy,LFlux_Et
+    real*8 :: k_Fourier=1.0 ! rate of heat conduction
+      
     
     ! -   i direction
       do j=jb,jm-1
@@ -19,8 +22,8 @@ subroutine vis_Flux
 !
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2
-      LFlux_Et=(uil(i,j)*Tau_xx+vil(i,j)*Tau_xy(i,j)+k_heat(i,j)*dx_i(T,i,j))*sav1 &
-      & +(uil(i,j)*Tau_xy+vil(i,j)*Tau_yy(i,j)+k_heat(i,j)*dy_i(T,i,j))*sav2
+      LFlux_Et=(uil(i,j)*Tau_xx+vil(i,j)*Tau_xy+k_Fourier*dx_i(T,i,j))*sav1 &
+      & +(uil(i,j)*Tau_xy+vil(i,j)*Tau_yy+k_Fourier*dy_i(T,i,j))*sav2
       
       !SumFlux_rho(i,j)=SumFlux_rho(i,j)  ! no Flux to add
       SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-LFlux_Et
@@ -56,8 +59,8 @@ subroutine vis_Flux
       
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2
-      LFlux_Et=(ujl(i,j)*Tau_xx+vjl(i,j)*Tau_xy(i,j)+k_heat(i,j)*dx_i(T,i,j))*sav1 &
-      & +(ujl(i,j)*Tau_xy+vjl(i,j)*Tau_yy(i,j)+k_heat(i,j)*dy_i(T,i,j))*sav2
+      LFlux_Et=(ujl(i,j)*Tau_xx+vjl(i,j)*Tau_xy+k_Fourier*dx_i(T,i,j))*sav1 &
+      & +(ujl(i,j)*Tau_xy+vjl(i,j)*Tau_yy+k_Fourier*dy_i(T,i,j))*sav2
       
       
       !SumFlux_rho(i,j)=SumFlux_rho(i,j) ! no Flux to add

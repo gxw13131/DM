@@ -36,7 +36,7 @@
              entr=pcar/rcar**Gamma
              amach=sqrt(ucar*ucar+vcar*vcar)&
      &             /sqrt(Gamma*pcar/rcar)
-             vmur=vmu(i,j)*Rho_ref*V_ref*L_ref
+             vmur=Mu_E(i,j)*Rho_ref*V_ref*L_ref
              
              write(30,*) xcar,ycar&
      &                  ,ucar,vcar&
@@ -69,7 +69,7 @@
       do  j=jb,jm
           write(1)    vx(i,j),vy(i,j)&
      &               ,p(i,j),rho(i,j)&
-     &               ,vmul(i,j),vmu(i,j)&
+     &               ,Mu_L(i,j),Mu_E(i,j)&
      &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
      &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
       end do
