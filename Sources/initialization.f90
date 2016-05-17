@@ -4,14 +4,14 @@
 !     
       use main
 !
-      open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',status='unknown')
+      open (4,file='euler.in',status='unknown')
 !
 !     read in main integer/logical control variables
 !     ----------------------------------------------
 !
-      read(4,*) nmax,irest,iprint 
+      read(4,*) nmax,is_restart,iprint 
 !         nmax:  maximum advancing steps;
-!         irest: start from very beginning(0) or start from a previous computation(1);
+!         is_restart: start from very beginning(0) or start from a previous computation(1);
 !         iprint: output every iprint steps
 !
 
@@ -24,12 +24,12 @@
 !     read constants and CFL number 
 !     ------------------------------
 !
-      read(4,*) cp,ga,prl
+      read(4,*) cp,Gamma,Pr_L
 !         cp: specfic heat at constant pressure
-!         ga: ratio of specific heat
-!         prl:Prandt.al number
-      prte=prl
-      prt=prl
+!         Gamma: ratio of specific heat
+!         Pr_L:Prandt.al number
+      Pr_E=Pr_L
+      Pr_T=Pr_L
       
       read(4,*) cfl
 !         cfl: cfl number
@@ -39,8 +39,8 @@
 !     read inlet/outlet parameters: uniform inlet, need to be modified.
 !     -----------------------------------------------------------------
 !
-!      read(4,*) vxin,vyin,pin,tpin
-!      read(4,*) pout
+!      read(4,*) Vx_Inlet,Vy_Inlet,p_Inlet,T_Inlet
+!      read(4,*) p_Out
 !
       close(4)
 !===========end of the input file bl.in=========================
@@ -48,7 +48,7 @@
 !     read grids 
 !     ----------
 !
-        open (5,file='D:\\CFD_DM\\DM\\Input\\grid.in',status='unknown')
+        open (5,file='grid.in',status='unknown')
         read(5,*) imc,jmc
         ib=3
         jb=3
@@ -88,35 +88,35 @@
 !      non-dimensionalization
 !
       
-       basel=1. !x(im,jb)-x(ib,jb)
-       baser=1. !pin/(tpin*(ga-1.)*cp)
-       basev=1. !sqrt(pin/baser)
-       baset=1. !tpin 
-       basec=1. !sqrt((ga-1.)*cp*baset)
-       basem=1. !sqrt(vxin*vxin+vyin*vyin)/basec
+       L_ref=1. !x(im,jb)-x(ib,jb)
+       Rho_ref=1. !p_Inlet/(T_Inlet*(ga-1.)*cp)
+       V_ref=1. !sqrt(p_Inlet/Rho_ref)
+       T_ref=1. !T_Inlet 
+       basec=1. !sqrt((ga-1.)*cp*T_ref)
+       Ma_ref=1. !sqrt(Vx_Inlet*Vx_Inlet+Vy_Inlet*Vy_Inlet)/basec
        
        
-       write(*,*) 'baseparameters', basel,baser,basev,baset,basem
+       write(*,*) 'baseparameters', L_ref,Rho_ref,V_ref,T_ref,Ma_ref
        
 !      non-dim parameters
 
-       cp=cp*baset/(basev*basev)
+       cp=cp*T_ref/(V_ref*V_ref)
        
 !      non-dim inlet/outlet parameters 
        
-       vxin=vxin/basev
-       vyin=vyin/basev
+       Vx_Inlet=Vx_Inlet/V_ref
+       Vy_Inlet=Vy_Inlet/V_ref
        
-       pin=pin/(baser*basev*basev)
-       tpin=tpin/baset
-       pout=pout/(baser*basev*basev)
+       p_Inlet=p_Inlet/(Rho_ref*V_ref*V_ref)
+       T_Inlet=T_Inlet/T_ref
+       p_Out=p_Out/(Rho_ref*V_ref*V_ref)
        
 !      non-dim coordinates       
        
         do i=ib,im
         do j=jb,jm
-           x(i,j)=x(i,j)/basel
-           y(i,j)=y(i,j)/basel
+           x(i,j)=x(i,j)/L_ref
+           y(i,j)=y(i,j)/L_ref
         end do
         end do
 !
@@ -124,12 +124,11 @@
 !     set various constants
 !     ---------------------
 !
-      ga1=ga-1
-      fga=(ga-1.0)/ga
-      rfga=1.0/fga
-      rcp=1.0/cp
-      cv=cp/ga
-      rcpcv=cp-cv
+      Gamma1=Gamma-1
+      Gamma2=(Gamma-1.0)/Gamma
+      Gamma3=1.0/Gamma2
+      cv=cp/Gamma
+      R_air=cp-cv
 
 !
 !     compute aera vectors
@@ -146,7 +145,7 @@
 !     initialization
 !     --------------
 !
-      if(irest.eq.0) n=0
+      if(is_restart.eq.0) n=0
 
 !
 !     initial condition
@@ -159,12 +158,12 @@
               yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
               flag=1.73205*(xx-0.1666667)-yy
               if(flag.gt.0) then
-                   ro(i,j)=1.4
+                   rho(i,j)=1.4
                    vx(i,j)=0.
                    vy(i,j)=0.
                     p(i,j)=1.0
               else
-                    ro(i,j)=8.0
+                    rho(i,j)=8.0
                     vx(i,j)=7.1447
                     vy(i,j)=-4.125
                      p(i,j)=116.5
@@ -177,17 +176,17 @@
       do  j=jb,jm-1
       
       e=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
-      roe(i,j)=p(i,j)/(ga-1)+(e)*ro(i,j)
-      ho(i,j)=ga*(roe(i,j)/ro(i,j)-e)+e
-      ros=ro(i,j)
-      rovx(i,j)=ros*vx(i,j)
-      rovy(i,j)=ros*vy(i,j)
-      tp(i,j)=p(i,j)/(ro(i,j)*rcpcv)
+      rho_Et(i,j)=p(i,j)/(Gamma-1)+(e)*rho(i,j)
+      Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-e)+e
+      ros=rho(i,j)
+      rho_vx(i,j)=ros*vx(i,j)
+      rho_vy(i,j)=ros*vy(i,j)
+      T(i,j)=p(i,j)/(rho(i,j)*R_air)
 
-      rom1  (i,j)=ro  (i,j)
-      roem1 (i,j)=roe (i,j)
-      rovxm1(i,j)=rovx(i,j)
-      rovym1(i,j)=rovy(i,j)
+      Rho_m1(i,j)=rho(i,j)
+      Rho_Et_m1 (i,j)=rho_Et(i,j)
+      Rho_vx_m1(i,j)=rho_vx(i,j)
+      Rho_vy_m1(i,j)=rho_vy(i,j)
       
       end do
       end do
@@ -197,7 +196,7 @@
 !     restart from backup intermediate results
 !     --------------------------
 !
-      if(irest.eq.0) goto 10000
+      if(is_restart.eq.0) goto 10000
 !
 !      read:
 !      velocities, static pressure, density,viscosity
@@ -210,10 +209,10 @@
       do  i=ib,im
       do  j=jb,jm
              read(5) vx(i,j),vy(i,j)&
-     &               ,p(i,j),ro(i,j)&
+     &               ,p(i,j),rho(i,j)&
      &               ,vmul(i,j),vmu(i,j)&
-     &               ,rom1(i,j),roem1(i,j)&
-     &               ,rovxm1(i,j),rovym1(i,j)
+     &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
+     &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
      
       end do
       end do
@@ -222,9 +221,9 @@
       
       do i=ib,im-1
       do j=jb,jm-1
-      temini=tpin*baset
+      temini=T_Inlet*T_ref
       vmul(i,j)=1.458*abs(temini)**1.5/(temini+110.4)*1.0d-6/&
-         (baser*basev*basel)
+         (Rho_ref*V_ref*L_ref)
       vmu(i,j)=vmul(i,j)
       end do
       end do
@@ -238,12 +237,12 @@
       do  j=jb,jm-1
       
       vsqh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
-      roe(i,j)=p(i,j)/ga1+vsqh*ro(i,j)
-      ho(i,j)=ga*(roe(i,j)/ro(i,j)-vsqh)+vsqh
-      ros=ro(i,j)
-      rovx(i,j)=ros*vx(i,j)
-      rovy(i,j)=ros*vy(i,j)
-      tp(i,j)=p(i,j)/(ro(i,j)*rcpcv)
+      rho_Et(i,j)=p(i,j)/Gamma1+vsqh*rho(i,j)
+      Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsqh)+vsqh
+      ros=rho(i,j)
+      rho_vx(i,j)=ros*vx(i,j)
+      rho_vy(i,j)=ros*vy(i,j)
+      T(i,j)=p(i,j)/(rho(i,j)*R_air)
       
       end do
       end do

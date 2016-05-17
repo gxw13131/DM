@@ -1,4 +1,3 @@
-
 !=========================================================================================
      
       subroutine bc_ghostcell_value
@@ -20,13 +19,13 @@
      
       do j=jb,jm-1
   
-           ro(i,j)=max(2.*ro(i+1,j)-ro(i+2,j),1.0e-10)
+           rho(i,j)=max(2.*rho(i+1,j)-rho(i+2,j),1.0e-10)
            vx(i,j)=2.*vx(i+1,j)-vx(i+2,j)
            vy(i,j)=2.*vy(i+1,j)-vy(i+2,j)
             p(i,j)=max(2.*p(i+1,j)-p(i+2,j),1.0e-10)
           vmu(i,j)=2.*vmu(i+1,j)-vmu(i+2,j)
          vmul(i,j)=2.*vmul(i+1,j)-vmul(i+2,j)
-       alagmx(i,j)=alagmx(i+1,j)
+       L_Cell_x(i,j)=L_Cell_x(i+1,j)
      
       end do
      
@@ -39,10 +38,10 @@
       p (i,j)=max(2.*p(i-1,j)-p(i-2,j),1.0e-10) 
       vx(i,j)=2.*vx(i-1,j)-vx(i-2,j)
       vy(i,j)=2.*vy(i-1,j)-vy(i-2,j)
-      ro(i,j)=max(2.*ro(i-1,j)-ro(i-2,j),1.0e-10)
+      rho(i,j)=max(2.*rho(i-1,j)-rho(i-2,j),1.0e-10)
      vmu(i,j)=2.*vmu(i-1,j)-vmu(i-2,j)
     vmul(i,j)=2.*vmul(i-1,j)-vmul(i-2,j)
-  alagmx(i,j)=alagmx(i-1,j)
+  L_Cell_x(i,j)=L_Cell_x(i-1,j)
   
       end do
       
@@ -62,18 +61,18 @@
       vx(i,j-1)=vx(i,j)
       vy(i,j-1)=-vy(i,j)
       p (i,j-1)=p (i,j)
-      ro(i,j-1)=ro(i,j)
+      rho(i,j-1)=rho(i,j)
       vmu(i,j-1)=vmu(i,j)
       vmul(i,j-1)=vmul(i,j)
-      alagmy(i,j-1)=alagmy(i,j)
+      L_Cell_y(i,j-1)=L_Cell_y(i,j)
       else
       vx(i,j-1)=2*vx(i,j)-vx(i,j+1)
       vy(i,j-1)=2*vy(i,j)-vy(i,j+1)
       p (i,j-1)=2*p (i,j)-p (i,j+1)
-      ro(i,j-1)=2*ro(i,j)-ro(i,j+1)
+      rho(i,j-1)=2*rho(i,j)-rho(i,j+1)
       vmu(i,j-1)=2*vmu(i,j)-vmu(i,j+1)
       vmul(i,j-1)=2*vmul(i,j)-vmul(i,j+1)
-      alagmy(i,j-1)=alagmy(i,j)
+      L_Cell_y(i,j-1)=L_Cell_y(i,j)
       end if
       end do
       
@@ -84,10 +83,10 @@
       vx(i,j)=2*vx(i,j-1)-vx(i,j-2)
       vy(i,j)=2*vy(i,j-1)-vy(i,j-2)
       p (i,j)=2*p (i,j-1)-p (i,j-2)
-      ro(i,j)=2*ro(i,j-1)-ro(i,j-2)
+      rho(i,j)=2*rho(i,j-1)-rho(i,j-2)
       vmu(i,j)=2*vmu(i,j-1)-vmu(i,j-2)
       vmul(i,j)=2*vmul(i,j-1)-vmul(i,j-2)
-      alagmy(i,j)=alagmy(i,j-1)
+      L_Cell_y(i,j)=L_Cell_y(i,j-1)
       
       end do
        

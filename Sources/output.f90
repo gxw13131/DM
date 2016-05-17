@@ -25,18 +25,18 @@
        
           do j=jb,jm-1
           do i=ib,im-1
-             xcar=xc(i,j)*basel
-             ycar=yc(i,j)*basel
+             xcar=xc(i,j)*L_ref
+             ycar=yc(i,j)*L_ref
              
-             ucar=vx(i,j)*basev
-             vcar=vy(i,j)*basev
+             ucar=vx(i,j)*V_ref
+             vcar=vy(i,j)*V_ref
              
-             pcar=p(i,j)*baser*basev*basev
-             rcar=ro(i,j)*baser
-             entr=pcar/rcar**ga
+             pcar=p(i,j)*Rho_ref*V_ref*V_ref
+             rcar=rho(i,j)*Rho_ref
+             entr=pcar/rcar**Gamma
              amach=sqrt(ucar*ucar+vcar*vcar)&
-     &             /sqrt(ga*pcar/rcar)
-             vmur=vmu(i,j)*baser*basev*basel
+     &             /sqrt(Gamma*pcar/rcar)
+             vmur=vmu(i,j)*Rho_ref*V_ref*L_ref
              
              write(30,*) xcar,ycar&
      &                  ,ucar,vcar&
@@ -60,7 +60,7 @@
 !     save data for restart
 !     ---------------------
 !
-      if(ip.eq.1) then
+      if(is_print.eq.1) then
       write(*,*) 'now,backup the intermediate results'
       open(1,file='bl.sav',form='unformatted')
       write(1) n,ttime
@@ -68,10 +68,10 @@
       do  i=ib,im
       do  j=jb,jm
           write(1)    vx(i,j),vy(i,j)&
-     &               ,p(i,j),ro(i,j)&
+     &               ,p(i,j),rho(i,j)&
      &               ,vmul(i,j),vmu(i,j)&
-     &               ,rom1(i,j),roem1(i,j)&
-     &               ,rovxm1(i,j),rovym1(i,j)
+     &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
+     &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
       end do
       end do
      

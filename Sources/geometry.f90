@@ -32,11 +32,11 @@
       do i=ib,im
       do j=jb,jm-1
       	
-          aix(i,j)=(y(i,j+1)-y(i,j))  !中持文楚
-          aiy(i,j)=-(x(i,j+1)-x(i,j))
-          vib(i,j)=0.
+          Sn_X_i(i,j)=(y(i,j+1)-y(i,j))  !中持文楚
+          Sn_Y_i(i,j)=-(x(i,j+1)-x(i,j))
+          vib(i,j)=0. !grid velocity, no use for now
           
-          aim(i,j)=sqrt(aix(i,j)**2+aiy(i,j)**2)
+          S_i(i,j)=sqrt(Sn_X_i(i,j)**2+Sn_Y_i(i,j)**2)
      
       end do
       end do
@@ -46,11 +46,11 @@
       do i=ib,im-1
       do j=jb,jm
           
-          ajx(i,j)=-(y(i+1,j)-y(i,j))
-          ajy(i,j)=(x(i+1,j)-x(i,j))
+          Sn_X_j(i,j)=-(y(i+1,j)-y(i,j))
+          Sn_Y_j(i,j)=(x(i+1,j)-x(i,j))
           vjb(i,j)=0.
           
-          ajm(i,j)=sqrt(ajx(i,j)**2+ajy(i,j)**2)
+          S_j(i,j)=sqrt(Sn_X_j(i,j)**2+Sn_Y_j(i,j)**2)
       end do
       end do
       
@@ -59,7 +59,7 @@
 
       do i=ib,im-1
       do j=jb,jm-1
-      
+ !      interface pisition     
       xw=0.5*(x(i,j)+x(i,j+1))
       yw=0.5*(y(i,j)+y(i,j+1))
      
@@ -72,10 +72,10 @@
       xn=0.5*(x(i,j+1)+x(i+1,j+1)) 
       yn=0.5*(y(i,j+1)+y(i+1,j+1)) 
      
-     
-      alagmx(i,j)=sqrt((xw-xe)**2+(yw-ye)**2)
+ !      distance between two parallel interface    
+      L_Cell_x(i,j)=sqrt((xw-xe)**2+(yw-ye)**2)
        
-      alagmy(i,j)=sqrt((xs-xn)**2+(ys-yn)**2)
+      L_Cell_y(i,j)=sqrt((xs-xn)**2+(ys-yn)**2)
        
       
       end do
@@ -96,12 +96,12 @@
       do i=ib,im-1
       do j=jb,jm-1
       
-          vol(i,j)=0.5*((x(i+1,j+1)-x(i,j))*&
+          Vcell(i,j)=0.5*((x(i+1,j+1)-x(i,j))*&
      &                    (y(i,j+1)-y(i+1,j))-&
      &                    (y(i+1,j+1)-y(i,j))*&
      &                    (x(i,j+1)-x(i+1,j)))
           
-          if(vol(i,j).lt.0.) then
+          if(Vcell(i,j).lt.0.) then
                  write(*,*) 'volume.lt.0',i,j,k
                  stop
           end if

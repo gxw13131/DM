@@ -28,8 +28,8 @@
 !     ----------------------------
 !
       
-      iend=0
-!     if iend==1, the computation stops
+      is_End=0
+!     if is_End==1, the computation stops
       
       istart=0
 !     istart:store the advancing time steps for every new start up
@@ -38,8 +38,8 @@
 !     ---------------------
  
 
- 100  ip=0
-!     if ip==1 output the results
+ 100  is_print=0
+!     if is_print==1 output the results
 
       n=n+1
 !     n: accumulated time step of the computation
@@ -49,12 +49,12 @@
           write(*,*) 'now, computing the ',n,'th step'
           write(2,*) 'now, computing the ',n,'th step'
       end if
-      if(n.eq.nmax) iend=1
+      if(n.eq.nmax) is_End=1
       
-      ip=0.
-      if(mod(n,iprint).eq.0) ip=1
+      is_print=0
+      if(mod(n,iprint).eq.0) is_print=1
       
-!     compute time step
+!     compute the minimum time step to guarantee CFL condition
       call time_step
 !     ============= 
 !     
@@ -87,10 +87,10 @@
       
       tinv=1./step(i,j)
       
-      r1=abs(ro  (i,j)-rom1  (i,j))*tinv
-      r2=abs(rovx(i,j)-rovxm1(i,j))*tinv
-      r3=abs(rovy(i,j)-rovym1(i,j))*tinv
-      r4=abs(roe (i,j)-roem1 (i,j))*tinv
+      r1=abs(rho(i,j)-rho_m1(i,j))*tinv
+      r2=abs(rho_vx(i,j)-Rho_vx_m1(i,j))*tinv
+      r3=abs(rho_vy(i,j)-Rho_vy_m1(i,j))*tinv
+      r4=abs(rho_Et(i,j)-Rho_Et_m1(i,j))*tinv
       
       if(r1>rms1) then
         rsm1=r1
@@ -120,7 +120,7 @@
       end do
       
       if(mod(n,1).eq.0) then
-          write(*,*) 'time', ttime*basel/basev
+          write(*,*) 'time', ttime*L_ref/V_ref
           write(*,*) rsm1,imax1,jmax1
           write(*,*) rsm2,imax2,jmax2
           write(*,*) rsm3,imax3,jmax3
@@ -135,10 +135,10 @@
       do i=ib,im
       do j=jb,jm 
 !
-      rom1  (i,j)=ro  (i,j)
-      rovxm1(i,j)=rovx(i,j)
-      rovym1(i,j)=rovy(i,j)
-      roem1 (i,j)=roe (i,j)
+      Rho_m1(i,j)=rho(i,j)
+      Rho_vx_m1(i,j)=rho_vx(i,j)
+      Rho_vy_m1(i,j)=rho_vy(i,j)
+      Rho_Et_m1(i,j)=rho_Et(i,j)
 !
       end do
       end do
@@ -148,7 +148,7 @@
       
 !     ==============
 !
-      if(iend.eq.1) then
+      if(is_End.eq.1) then
       close (2)
       write(*,*) 'Normal Termination'
   
