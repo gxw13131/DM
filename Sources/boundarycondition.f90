@@ -19,12 +19,18 @@
      
       do j=jb,jm-1
   
-           rho(i,j)=max(2.*rho(i+1,j)-rho(i+2,j),1.0e-10)
-           vx(i,j)=2.*vx(i+1,j)-vx(i+2,j)
-           vy(i,j)=2.*vy(i+1,j)-vy(i+2,j)
-            p(i,j)=max(2.*p(i+1,j)-p(i+2,j),1.0e-10)
-         Mu_E(i,j)=2.*Mu_E(i+1,j)-Mu_E(i+2,j)
-         Mu_L(i,j)=2.*Mu_L(i+1,j)-Mu_L(i+2,j)
+      rho(i,j)=1.225
+      vx(i,j)=1000.0
+      vy(i,j)=0.0
+      p(i,j)=101325.0
+      Mu_L(i,j)=1.789e-5
+      Mu_E(i,j)=Mu_L(i,j)
+       !    rho(i,j)=max(2.*rho(i+1,j)-rho(i+2,j),1.0e-10)
+       !    vx(i,j)=2.*vx(i+1,j)-vx(i+2,j)
+       !    vy(i,j)=2.*vy(i+1,j)-vy(i+2,j)
+       !     p(i,j)=max(2.*p(i+1,j)-p(i+2,j),1.0e-10)
+       !  Mu_E(i,j)=2.*Mu_E(i+1,j)-Mu_E(i+2,j)
+       !  Mu_L(i,j)=2.*Mu_L(i+1,j)-Mu_L(i+2,j)
        L_Cell_x(i,j)=L_Cell_x(i+1,j)
      
       end do

@@ -156,18 +156,13 @@
       do j=jb,jm-1
               xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
               yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
-              flag=1.73205*(xx-0.1666667)-yy
-              if(flag.gt.0) then
-                   rho(i,j)=1.4
-                   vx(i,j)=0.
+!==============================================================
+              ! initilize the flow field with 
+                   rho(i,j)=1.225
+                   vx(i,j)=1000.
                    vy(i,j)=0.
-                    p(i,j)=1.0
-              else
-                    rho(i,j)=8.0
-                    vx(i,j)=7.1447
-                    vy(i,j)=-4.125
-                     p(i,j)=116.5
-              endif
+                    p(i,j)=101325.0
+
       end do
       end do
       
