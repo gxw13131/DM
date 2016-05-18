@@ -4,6 +4,10 @@
 !     
       use main
 !
+      integer :: imc,jmc
+      real*8 :: Xcar,Ycar
+      real*8 :: e,TT,KE
+      
       open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',status='unknown')
 !
 !     read in main integer/logical control variables
@@ -92,7 +96,7 @@
        Rho_ref=1. !p_Inlet/(T_Inlet*(ga-1.)*cp)
        V_ref=1. !sqrt(p_Inlet/Rho_ref)
        T_ref=1. !T_Inlet 
-       basec=1. !sqrt((ga-1.)*cp*T_ref)
+       !basec=1. !sqrt((ga-1.)*cp*T_ref)
        Ma_ref=1. !sqrt(Vx_Inlet*Vx_Inlet+Vy_Inlet*Vy_Inlet)/basec
        
        
@@ -175,9 +179,8 @@
       e=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
       rho_Et(i,j)=p(i,j)/(Gamma-1)+(e)*rho(i,j)
       Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-e)+e
-      ros=rho(i,j)
-      rho_vx(i,j)=ros*vx(i,j)
-      rho_vy(i,j)=ros*vy(i,j)
+      rho_vx(i,j)=rho(i,j)*vx(i,j)
+      rho_vy(i,j)=rho(i,j)*vy(i,j)
       T(i,j)=p(i,j)/(rho(i,j)*R_air)
 
       Rho_m1(i,j)=rho(i,j)
@@ -218,8 +221,8 @@
       
       do i=ib,im-1
       do j=jb,jm-1
-      temini=T_Inlet*T_ref
-      Mu_L(i,j)=1.458*abs(temini)**1.5/(temini+110.4)*1.0d-6/&
+      TT=T_Inlet*T_ref
+      Mu_L(i,j)=1.458*abs(TT)**1.5/(TT+110.4)*1.0d-6/&
          (Rho_ref*V_ref*L_ref)
      Mu_E(i,j)=Mu_L(i,j)
       end do
@@ -233,12 +236,11 @@
       do  i=ib,im-1
       do  j=jb,jm-1
       
-      vsqh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
-      rho_Et(i,j)=p(i,j)/Gamma1+vsqh*rho(i,j)
-      Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsqh)+vsqh
-      ros=rho(i,j)
-      rho_vx(i,j)=ros*vx(i,j)
-      rho_vy(i,j)=ros*vy(i,j)
+      KE=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
+      rho_Et(i,j)=p(i,j)/Gamma1+KE*rho(i,j)
+      Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-KE)+KE
+      rho_vx(i,j)=rho(i,j)*vx(i,j)
+      rho_vy(i,j)=rho(i,j)*vy(i,j)
       T(i,j)=p(i,j)/(rho(i,j)*R_air)
       
       end do

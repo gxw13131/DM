@@ -3,6 +3,8 @@
 !     *****************
 !
       use main
+      real*8 :: time1,time2
+      integer :: nrk
 !*****************************************************************************
       CALL CPU_TIME ( time1 )
 !     compute the area-vectors and interpolation coordinates  

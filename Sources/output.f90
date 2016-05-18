@@ -3,6 +3,8 @@
 !     ********************
       use main
       character*7 nam
+      integer :: k
+      real*8 :: Xcar, Ycar,Ucar,Vcar,Pcar,Rcar,entr,Amach,Vmur
         if(mod(n,iprint)==0) then
         k=(n/iprint)
         if(k<1000) then

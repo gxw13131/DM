@@ -15,6 +15,7 @@
 !
 !=====compute the coordinates of cell centers      
       
+      real*8 :: Xw,Yw,Xe,Ye,Xn,Yn,Xs,Ys
  
       do i=ib,im-1
       do j=jb,jm-1
@@ -102,7 +103,7 @@
      &                    (x(i,j+1)-x(i+1,j)))
           
           if(Vcell(i,j).lt.0.) then
-                 write(*,*) 'volume.lt.0',i,j,k
+                 write(*,*) 'volume.lt.0',i,j
                  stop
           end if
           

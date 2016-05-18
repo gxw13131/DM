@@ -1,5 +1,6 @@
       module main
       implicit none
+      integer :: i,j
       integer :: iq,jq,ngmax
       real :: EPSILON,EPSILON1,INFINITY,one,zero
       parameter(iq=405,jq=105,ngmax=max(iq,jq)+5)
@@ -16,6 +17,8 @@
       real :: rho_inlet=1.224
       real :: p_inlet=101325.0
       real :: Mu_inlet=1.789e-5
+      real :: T_inlet=287.0
+      real :: P_out=0.0
       integer :: &
      & ib,jb &
      &,im,jm,irsolver

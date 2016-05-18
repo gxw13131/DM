@@ -11,6 +11,10 @@
 
      use main
 
+     integer :: IS_END
+     real*8 :: Tinv
+     real*8 :: r1,r2,r3,r4,RSM1,RSM2,RSM3,RSM4
+     real*8 :: TIME1,TIME2
 !
       open (2,file='Euler.his',status='unknown')
 !     bl.his:file that store the computation history
@@ -58,16 +62,18 @@
       call time_step
 !     ============= 
 !     
-      do nunsloop=1,2
+     
+      !do nunsloop=1,2
 !       nunsloop: number of step in Runge-Kutta time stepping scheme 
 !
 !     solve Euler equations
 !     ------------------
 !
-      call solver(nunsloop)
+      call solver(1)
+      call solver(2)
 !     subroutine solver: solve the ns equation for one Runge-Kutta stage      
       
-      end do
+      !end do
 !
 !
       if(.not.steady1) ttime=ttime+step(ib,jb)

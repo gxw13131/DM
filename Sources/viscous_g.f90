@@ -2,6 +2,7 @@ subroutine viscous_Flux
     use main 
     ! compute the viscous flux 
     ! add to SumFlux()
+    real*8 :: sav1,sav2
     real*8 :: Tau_xx,Tau_xy,Tau_yy !stress
     real*8 :: LFlux_rho_vx,LFlux_rho_vy,LFlux_Et
     real*8 :: k_Fourier=1.0 ! rate of heat conduction

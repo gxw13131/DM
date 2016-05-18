@@ -3,7 +3,7 @@
       subroutine bc_ghostcell_value
      !===================================
       use main
-      
+      real*8 :: xhalf
       ! set ghost-cell at boundary for various boundary conditions
       
       

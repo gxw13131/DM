@@ -9,7 +9,8 @@
 !     compute spectral radii
 !     ----------------------
 !
-      
+      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
+      real*8 :: ttg
       do j=jb,jm-1
       do i=ib,im-1
           
@@ -74,6 +75,10 @@
      !===================================
       use main
       
+      real*8 :: AlsInv
+      
+      
+      
       ! interpolate the primitive variables to cell interfaces
       
       ! iface
@@ -122,7 +127,16 @@
 !=====================================================================================      
       subroutine muscl_interpolation 
      !===============================
-      use main  
+      use main 
+      
+      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
+      real*8 :: ttg, Alsinv,epsm
+      real*8 :: DR,DL,UL,UR,VL,VR,PL,PR,RL,RR,VamL,VamR,HL,HR,AcL,AcR
+      real*8 :: RRoRL,RRoRLp1
+      real*8 :: Rm,Um,Vm,Hm,Vm2,Am2,Am
+      real*8 :: sav1,sav2,sav,sav1N,sav2N
+      real*8 :: DUnormal,Drou,Dp,DRU,DRV,DRE
+      real*8 :: sos,sos1,QNo,QN
       
       ! MUSCL interpolation at cell interface except boundaries
       
@@ -239,7 +253,22 @@
       
       use main
       
-          
+      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
+      real*8 :: ttg, Alsinv,epsm
+      real*8 :: DR,DL,UL,UR,VL,VR,PL,PR,RL,RR,VamL,VamR,HL,HR,AcL,AcR
+      real*8 :: RRoRL,RRoRLp1
+      real*8 :: Rm,Um,Vm,Hm,Vm2,Am2,Am
+      real*8 :: sav1,sav2,sav,sav1N,sav2N
+      real*8 :: DUnormal,Drou,Dp,DRU,DRV,DRE
+      real*8 :: sos,sosI,qn,qn0
+       
+      real*8 :: DU,DV
+      real*8 :: aqn,amn,am0,aam0,omam0,sosIP,sosp,coef,Dpc1,Dpc2,Dqnc1,Dqnc2
+      real*8 :: Adr,AdrU,AdrE,ULnormal,Urnormal,RULnormal,RURnormal
+      real*8 :: Droi,Dxi,Drei,Droj,Dxj,Dyj,Drej
+      real*8 :: EL,ER
+      real*8 :: Adrv,Dyi
+      
       epsm=0.1
       
       do i=ib-1,im+1
@@ -550,8 +579,24 @@
 !     =========================
       
       use main
+      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
+      real*8 :: ttg, Alsinv,epsm
+      real*8 :: DR,DL,UL,UR,VL,VR,PL,PR,RL,RR,VamL,VamR,HL,HR,AcL,AcR
+      real*8 :: RRoRL,RRoRLp1
+      real*8 :: Rm,Um,Vm,Hm,Vm2,Am2,Am
+      real*8 :: sav1,sav2,sav,sav1N,sav2N
+      real*8 :: DUnormal,Drou,Dp,DRU,DRV,DRE
+      real*8 :: sos,sos1,QNo,QN
       
-          
+       
+      real*8 :: DU,DV
+      real*8 :: aqn,amn,am0,aam0,omam0,sosIP,sosp,coef,Dpc1,Dpc2,Dqnc1,Dqnc2
+      real*8 :: Adr,AdrU,AdrE,ULnormal,Urnormal,RULnormal,RURnormal
+      real*8 :: Droi,Dxi,Drei,Droj,Dxj,Dyj,Drej
+      real*8 :: EL,ER
+      real*8 :: Adrv,Dyi
+      real*8 :: coeX,coeY
+      
       epsm=0.15
       
      
@@ -757,8 +802,8 @@
       
       use main
       
+      integer :: nrk
       REAL*8:: rkpa(2)
-      
       rkpa(1)=1.
       rkpa(2)=0.5
 !      
@@ -793,7 +838,7 @@
 !     ===========================
 
       use main                
-      
+      real*8 ::TT,Vsrh,RhoInv,VolInv
 
 !
 !
@@ -811,16 +856,16 @@
       rho_vx(i,j)=rho_vx(i,j)*volinv
       rho_vy(i,j)=rho_vy(i,j)*volinv
       
-      roinv=1./rho(i,j)
+      RhoInv=1./rho(i,j)
       
-      vx(i,j)=rho_vx(i,j)*roinv
-      vy(i,j)=rho_vy(i,j)*roinv
+      vx(i,j)=rho_vx(i,j)*RhoInv
+      vy(i,j)=rho_vy(i,j)*RhoInv
       
       
       vsrh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
       p(i,j)=Gamma1*(rho_Et(i,j)-vsrh*rho(i,j))
       Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsrh)+vsrh
-      T(i,j)=p(i,j)*roinv/R_air
+      T(i,j)=p(i,j)*RhoInv/R_air
 !
       TT=T(i,j)*T_ref
       Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
