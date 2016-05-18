@@ -159,11 +159,11 @@
               !yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
 !==============================================================
               ! initilize the flow field with 
-                   rho(i,j)=1.225
-                   vx(i,j)=10.
-                   vy(i,j)=0.
-                    p(i,j)=101325.0
-                    Mu_L(i,j)=1.789e-5
+                   rho(i,j)=rho_inlet
+                   vx(i,j)=Vx_inlet
+                   vy(i,j)=Vy_inlet
+                    p(i,j)=p_inlet
+                    Mu_L(i,j)=Mu_inlet
 
       end do
       end do

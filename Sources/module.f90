@@ -9,7 +9,13 @@
       
       logical :: steady1
       
-      
+      !============================
+      ! boundary conditions:
+      real :: Vx_inlet=100.0
+      real :: Vy_inlet=0.0
+      real :: rho_inlet=1.224
+      real :: p_inlet=101325.0
+      real :: Mu_inlet=1.789e-5
       integer :: &
      & ib,jb &
      &,im,jm,irsolver

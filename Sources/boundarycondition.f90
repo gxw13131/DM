@@ -20,7 +20,7 @@
       do j=jb,jm-1
   
       rho(i,j)=1.225
-      vx(i,j)=10.0
+      vx(i,j)=100.0
       vy(i,j)=0.0
       p(i,j)=101325.0
       Mu_L(i,j)=1.789e-5
@@ -86,13 +86,12 @@
       
       do i=ib,im-1
       
-      vx(i,j)=2*vx(i,j-1)-vx(i,j-2)
-      vy(i,j)=2*vy(i,j-1)-vy(i,j-2)
-      p (i,j)=2*p (i,j-1)-p (i,j-2)
-      rho(i,j)=2*rho(i,j-1)-rho(i,j-2)
-     Mu_E(i,j)=2*Mu_E(i,j-1)-Mu_E(i,j-2)
-      Mu_L(i,j)=2*Mu_L(i,j-1)-Mu_L(i,j-2)
-      L_Cell_y(i,j)=L_Cell_y(i,j-1)
+      rho(i,j)=rho_inlet
+      vx(i,j)=Vx_inlet
+      vy(i,j)=Vy_inlet
+      p(i,j)=p_inlet
+      Mu_L(i,j)=Mu_inlet
+      Mu_E(i,j)=Mu_L(i,j)
       
       end do
        
