@@ -1,4 +1,4 @@
-subroutine vis_Flux
+subroutine viscous_Flux
     use main 
     ! compute the viscous flux 
     ! add to SumFlux()
@@ -12,9 +12,9 @@ subroutine vis_Flux
       do i=ib,im
       !Stokes hypothesis: lambda=2*mu/3
       !mu on the interface is given by linear average: 0.5*(Mu_L(i,j)+Mu_L(i+1,j))
-      Tau_xx=(Mu_L(i,j)+Mu_L(i+1,j))/3.0*(2.0*dx_i(vx,i,j)-dy_i(vy,i,j))
-      Tau_xy=0.5*(Mu_L(i,j)+Mu_L(i+1,j))*(dx_i(vx,i,j)+dy_i(vy,i,j))
-      Tau_yy=(Mu_L(i,j)+Mu_L(i+1,j))/3.0*(2.0*dy_i(vy,i,j)-dx_i(vx,i,j))
+      Tau_xx=(Mu_E(i,j)+Mu_E(i+1,j))/3.0*(2.0*dx_i(vx,i,j)-dy_i(vy,i,j))
+      Tau_xy=0.5*(Mu_E(i,j)+Mu_E(i+1,j))*(dx_i(vx,i,j)+dy_i(vy,i,j))
+      Tau_yy=(Mu_E(i,j)+Mu_E(i+1,j))/3.0*(2.0*dy_i(vy,i,j)-dx_i(vx,i,j))
 !     surface area vectors
 !
       sav1=Sn_X_i(i,j) !dy
@@ -48,14 +48,17 @@ subroutine vis_Flux
       !Stokes hypothesis: lambda=2*mu/3
       !mu on the interface is given by linear average:
       !     0.5*(Mu_L(i,j)+Mu_L(i+1,j))
-      Tau_xx=(Mu_L(i,j)+Mu_L(i,j+1))/3.0*(2.0*dx_j(vx,i,j)-dy_j(vy,i,j))
-      Tau_xy=0.5*(Mu_L(i,j)+Mu_L(i,j+1))*(dx_j(vx,i,j)+dy_j(vy,i,j))
-      Tau_yy=(Mu_L(i,j)+Mu_L(i,j+1))/3.0*(2.0*dy_j(vy,i,j)-dx_j(vx,i,j))
+      Tau_xx=(Mu_E(i,j)+Mu_E(i,j+1))/3.0*(2.0*dx_j(vx,i,j)-dy_j(vy,i,j))
+      Tau_xy=0.5*(Mu_E(i,j)+Mu_E(i,j+1))*(dx_j(vx,i,j)+dy_j(vy,i,j))
+      Tau_yy=(Mu_E(i,j)+Mu_E(i,j+1))/3.0*(2.0*dy_j(vy,i,j)-dx_j(vx,i,j))
 !     
 !     surface area vectors
 !
       sav1=Sn_X_j(i,j)
       sav2=Sn_Y_j(i,j)      
+      
+      
+      k_Fourier=Mu_L(i,j)*cp/Pr_L
       
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2

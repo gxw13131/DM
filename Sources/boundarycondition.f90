@@ -70,7 +70,7 @@
       vy(i,j-1)=2*vy(i,j)-vy(i,j+1)
       p (i,j-1)=2*p (i,j)-p (i,j+1)
       rho(i,j-1)=2*rho(i,j)-rho(i,j+1)
-     Mu_E(i,j-1)=2*Mu_E(i,j)-Mu_E(i,j+1)
+      Mu_E(i,j-1)=2*Mu_E(i,j)-Mu_E(i,j+1)
       Mu_L(i,j-1)=2*Mu_L(i,j)-Mu_L(i,j+1)
       L_Cell_y(i,j-1)=L_Cell_y(i,j)
       end if

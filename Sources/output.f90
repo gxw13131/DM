@@ -18,7 +18,7 @@
             open(30,file=nam)
             write(30,*) 'title="contour"'
             write(30,*) 'variables="x","y","u","v",'
-            write(30,*)'"p","den","mach","entropy","vmu"'
+            write(30,*)'"p","den","mach","entropy","mu"'
      
             write(30,*) 'zone i=',im-ib,' j=',jm-jb &
                    &,' f=point'

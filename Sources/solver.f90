@@ -36,6 +36,9 @@
       else
       call inviscid_fluxes_lax
       end if
+      
+!       compute the viscous flux
+      call viscous_Flux
 !     ====================  
 !      CALL CPU_TIME ( time12 )
 !*****************************************************************************

@@ -820,7 +820,11 @@
       vsrh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
       p(i,j)=Gamma1*(rho_Et(i,j)-vsrh*rho(i,j))
       Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsrh)+vsrh
+      T(i,j)=p(i,j)*roinv/R_air
 !
+      TT=T(i,j)*T_ref
+      Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
+      Mu_E(i,j)=Mu_L(i,j) !+Mu_T(i,j) !for turbulence!!
       end do
       end do
      
