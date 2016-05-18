@@ -63,7 +63,7 @@
       do i=ib,im-1
       
       xhalf=0.5*(x(i,j)+x(i+1,j))
-      if(xhalf>=1./6.) then  !x<1/6,均匀来流条件，否则固壁条件
+      if(xhalf>=1.) then  !x<1,均匀来流条件，否则固壁条件
       vx(i,j-1)=vx(i,j)
       vy(i,j-1)=-vy(i,j)
       p(i,j-1)=p(i,j)
@@ -140,13 +140,19 @@
       
       do i=ib,im-1
       	
-         
+    xhalf=0.5*(x(i,j)+x(i+1,j))
+      if(xhalf>=1.) then  !x<1,均匀来流条件，否则固壁条件  
       ujl(i,j)=0.0
       vjl(i,j)=0.0
       pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
       rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
+      else
+      ujl(i,j)=0.5*(vx(i,j)+vx(i,j-1))
+      vjl(i,j)=0.5*(vy(i,j)+vy(i,j))
+      pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
+      rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
+      end if
       
- 
       end do
       
       j=jm

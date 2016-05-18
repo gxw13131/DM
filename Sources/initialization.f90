@@ -7,7 +7,7 @@
       integer :: imc,jmc
       real*8 :: Xcar,Ycar
       real*8 :: e,TT,KE
-      
+      real*8 :: temp
       open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',status='unknown')
 !
 !     read in main integer/logical control variables
@@ -60,7 +60,7 @@
         jm=jmc+jb
         do i=ib,im
         do j=jb,jm
-            read(5,*) x(i,j),y(i,j)
+            read(5,*) x(i,j),y(i,j),temp
         end do
         end do
         
