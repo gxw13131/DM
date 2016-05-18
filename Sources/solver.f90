@@ -38,7 +38,7 @@
       end if
       
 !       compute the viscous flux
-      call viscous_Flux
+!      call viscous_Flux
 !     ====================  
 !      CALL CPU_TIME ( time12 )
 !*****************************************************************************

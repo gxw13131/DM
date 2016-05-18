@@ -10,6 +10,8 @@ subroutine viscous_Flux
     ! -   i direction
       do j=jb,jm-1
       do i=ib,im
+      
+      
       !Stokes hypothesis: lambda=2*mu/3
       !mu on the interface is given by linear average: 0.5*(Mu_L(i,j)+Mu_L(i+1,j))
       Tau_xx=(Mu_E(i,j)+Mu_E(i+1,j))/3.0*(2.0*dx_i(vx,i,j)-dy_i(vy,i,j))
@@ -20,6 +22,8 @@ subroutine viscous_Flux
       sav1=Sn_X_i(i,j) !dy
       sav2=Sn_Y_i(i,j) !dx
 !
+      k_Fourier=Mu_L(i,j)*cp/Pr_L
+      
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2
       LFlux_Et=(uil(i,j)*Tau_xx+vil(i,j)*Tau_xy+k_Fourier*dx_i(T,i,j))*sav1 &

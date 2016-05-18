@@ -152,23 +152,25 @@
 !     -----------------
 !
 !
-      do i=ib,im-1
-      do j=jb,jm-1
-              xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
-              yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
+      do i=1,iq
+      do j=1,jq
+
+             ! xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
+              !yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
 !==============================================================
               ! initilize the flow field with 
                    rho(i,j)=1.225
-                   vx(i,j)=1000.
+                   vx(i,j)=10.
                    vy(i,j)=0.
                     p(i,j)=101325.0
+                    Mu_L(i,j)=1.789e-5
 
       end do
       end do
       
       
-      do  i=ib,im-1
-      do  j=jb,jm-1
+      do  i=1,iq
+      do  j=1,jq
       
       e=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
       rho_Et(i,j)=p(i,j)/(Gamma-1)+(e)*rho(i,j)
