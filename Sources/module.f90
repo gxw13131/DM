@@ -98,7 +98,7 @@
 	  &            imax3,jmax3, &
     &            imax4,jmax4
 
-    !================ definations of some DIFF functions =========================
+    !================ definations of some DIFF functions =============
     !       diff on the &&  LEFT/SOUTH  && interface
     contains
 

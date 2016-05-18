@@ -60,7 +60,8 @@
         jm=jmc+jb
         do i=ib,im
         do j=jb,jm
-            read(5,*) x(i,j),y(i,j),temp
+        
+            read(5,*) x(i,j),y(i,j)
         end do
         end do
         
