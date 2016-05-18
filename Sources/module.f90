@@ -11,7 +11,7 @@
       
       !============================
       ! boundary conditions:
-      real :: Vx_inlet=100.0
+      real :: Vx_inlet=1000.0
       real :: Vy_inlet=0.0
       real :: rho_inlet=1.224
       real :: p_inlet=101325.0
@@ -84,8 +84,8 @@
      &Mu_L(iq,jq),Mu_T(iq,jq),Mu_E(iq,jq)
 
 
-	  REAL*8 :: &
-    & Vx_Inlet,Vy_Inlet,T_Inlet,p_Inlet,p_Out
+	  !REAL*8 :: &
+   ! & Vx_Inlet,Vy_Inlet,T_Inlet,p_Inlet,p_Out
     
      REAL*8 :: &
      &  rms1,rms2,rms3,rms4

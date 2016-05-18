@@ -19,11 +19,11 @@
      
       do j=jb,jm-1
   
-      rho(i,j)=1.225
-      vx(i,j)=100.0
-      vy(i,j)=0.0
-      p(i,j)=101325.0
-      Mu_L(i,j)=1.789e-5
+      rho(i,j)=rho_inlet
+      vx(i,j)=Vx_inlet
+      vy(i,j)=Vy_inlet
+      p(i,j)=p_inlet
+      Mu_L(i,j)=Mu_inlet
       Mu_E(i,j)=Mu_L(i,j)
        !    rho(i,j)=max(2.*rho(i+1,j)-rho(i+2,j),1.0e-10)
        !    vx(i,j)=2.*vx(i+1,j)-vx(i+2,j)
@@ -66,9 +66,9 @@
       if(xhalf>=1./6.) then  !x<1/6,均匀来流条件，否则固壁条件
       vx(i,j-1)=vx(i,j)
       vy(i,j-1)=-vy(i,j)
-      p (i,j-1)=p (i,j)
+      p(i,j-1)=p(i,j)
       rho(i,j-1)=rho(i,j)
-     Mu_E(i,j-1)=Mu_E(i,j)
+      Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
       L_Cell_y(i,j-1)=L_Cell_y(i,j)
       else
@@ -86,12 +86,13 @@
       
       do i=ib,im-1
       
-      rho(i,j)=rho_inlet
-      vx(i,j)=Vx_inlet
-      vy(i,j)=Vy_inlet
-      p(i,j)=p_inlet
-      Mu_L(i,j)=Mu_inlet
-      Mu_E(i,j)=Mu_L(i,j)
+      vx(i,j+1)=vx(i,j)
+      vy(i,j+1)=-vy(i,j)
+      p(i,j+1)=p(i,j)
+      rho(i,j+1)=rho(i,j)
+      Mu_E(i,j+1)=Mu_E(i,j)
+      Mu_L(i,j+1)=Mu_L(i,j)
+      L_Cell_y(i,j+1)=L_Cell_y(i,j)
       
       end do
        
@@ -116,14 +117,11 @@
       
       do j=jb,jm-1
      
-          a=8.0
-          b=7.1447
-          c=-4.125
-          d=116.5
-          uil(i,j)=b
-          vil(i,j)=c
-          pil(i,j)=d
-          ril(i,j)=a
+          
+          uil(i,j)=Vx_inlet
+          vil(i,j)=Vy_inlet
+          pil(i,j)=p_inlet
+          ril(i,j)=rho_inlet
       
       end do
       
@@ -142,23 +140,12 @@
       
       do i=ib,im-1
       	
-      xhalf=0.5*(x(i,j)+x(i+1,j))
-      if(xhalf>=1./6.) then
-     
-      ujr(i,j)=ujl(i,j)
-      vjr(i,j)=vjl(i,j)
-      pjr(i,j)=pjl(i,j)
-      rjr(i,j)=rjl(i,j)
-      else
-          a=8.0
-          b=7.1447
-          c=-4.125
-          d=116.5
-      ujl(i,j)=b
-      vjl(i,j)=c
-      pjl(i,j)=d
-      rjl(i,j)=a
-      end if
+         
+      ujl(i,j)=0.0
+      vjl(i,j)=0.0
+      pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
+      rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
+      
  
       end do
       
@@ -168,32 +155,13 @@
       
       do i=ib,im-1
       
-         xx=0.5*(x(i,j)+x(i+1,j))
-         yy=0.5*(y(i,j)+y(i+1,j))
-         x0=1/6.+1.73205/3.+ttime*20*1.73205/3.
-         flag=1.73205*(xx-x0)-yy+1.
          
-         if(flag.gt.0) then
-
-             a=1.4
-             b=0.
-             c=0.
-             d=1.0
-
-           else
-
-             a=8.0
-             b=7.1447
-             c=-4.125
-             d=116.5
-
-           endif
             
       
-      ujr(i,j)=b
-      vjr(i,j)=c
-      pjr(i,j)=d
-      rjr(i,j)=a
+      ujr(i,j)=0.5*(vx(i,j)+vx(i,j+1))
+      vjr(i,j)=0.5*(vy(i,j)+vy(i,j+1))
+      pjr(i,j)=0.5*(p(i,j)+p(i,j+1))
+      rjr(i,j)=0.5*(rho(i,j)+rho(i,j+1))
  
       
       end do
