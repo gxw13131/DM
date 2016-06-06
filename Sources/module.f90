@@ -2,10 +2,10 @@
       implicit none
       integer :: i,j
       integer :: iq,jq,ngmax
-      real :: EPSILON,EPSILON1,INFINITY,one,zero
+      real :: EPSILON,EPSILON1,INFINITY
       parameter(iq=405,jq=105,ngmax=max(iq,jq)+5)
       parameter(EPSILON=1.0d-20,EPSILON1=1.0d-10,INFINITY=1.0d20)
-      parameter(one=1.0,zero=0.0)  
+     ! parameter(one=1.0,zero=0.0)  
       
       
       logical :: steady1
@@ -145,8 +145,8 @@
     DJ=Var(ii,jj)-Var(ii,jj-1)
     DI=0.25*(Var(ii+1,jj)+Var(ii+1,jj-1)-Var(ii-1,jj)-Var(ii-1,jj-1))
     
-    dx_j=( DI*(xc(ii+1,jj)-xc(ii+1,jj-1)) &
-         &-DJ*(y(ii+1,jj)-y(ii+1,jj-1))) &
+    dx_j=( DI*(yc(ii,jj)-yc(ii,jj-1)) &
+         &-DJ*(y(ii+1,jj)-y(ii,jj))) &
          & / &
          &((x(ii+1,jj)-x(ii,jj))*(yc(ii,jj)-yc(ii,jj-1)) &
          &-(y(ii+1,jj)-y(ii,jj))*(xc(ii,jj)-xc(ii,jj-1)) )
@@ -162,7 +162,7 @@
     DJ=Var(ii,jj)-Var(ii,jj-1)
     DI=0.25*(Var(ii+1,jj)+Var(ii+1,jj-1)-Var(ii-1,jj)-Var(ii-1,jj-1))
     
-    dy_j=( DJ*(x(ii+1,jj)-x(ii+1,jj-1)) &
+    dy_j=( DJ*(x(ii+1,jj)-x(ii,jj)) &
          &-DI*(xc(ii,jj)-xc(ii,jj-1))) &
          & / &
          &((x(ii+1,jj)-x(ii,jj))*(yc(ii,jj)-yc(ii,jj-1)) &

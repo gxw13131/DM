@@ -40,7 +40,7 @@
      &             /sqrt(Gamma*pcar/rcar)
              vmur=Mu_E(i,j)*Rho_ref*V_ref*L_ref
              
-             write(30,*) xcar,ycar&
+             write(30,"(E9.3,1X,  E9.3,1X,   E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3, 1X, E9.3, 1X, E9.3)") xcar,ycar&
      &                  ,ucar,vcar&
      &                  ,pcar,rcar,amach,entr,vmur
            end do

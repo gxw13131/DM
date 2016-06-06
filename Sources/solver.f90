@@ -56,8 +56,8 @@
       
       CALL CPU_TIME ( time2 )
       
-      write(*,*) 'time spent'
-      write(*,*) time2-time1
+      !write(*,*) 'time spent'
+      !write(*,*) time2-time1
     !  pause
       return
       end

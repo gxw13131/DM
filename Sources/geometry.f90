@@ -17,21 +17,21 @@
       
       real*8 :: Xw,Yw,Xe,Ye,Xn,Yn,Xs,Ys
  
-      do i=ib,im-1
-      do j=jb,jm-1
+      do i=ib-1,im
+      do j=jb-1,jm
       
-          xc(i,j)=0.25*(x    (i,j)+x    (i+1,j)&
-     &                      +x  (i,j+1)+x  (i+1,j+1))
-          yc(i,j)=0.25*(y    (i,j)+y    (i+1,j)&
-     &                      +y  (i,j+1)+y  (i+1,j+1))       
+          xc(i,j)=0.25*(x(i,j)+x(i+1,j)&
+     &                      +x(i,j+1)+x(i+1,j+1))
+          yc(i,j)=0.25*(y(i,j)+y(i+1,j)&
+     &                      +y(i,j+1)+y(i+1,j+1))       
       end do
       end do
      
 !
 !     i face: surface vector components, grid velocity, shifted volume
 !
-      do i=ib,im
-      do j=jb,jm-1
+      do i=ib-1,im+1
+      do j=jb-1,jm
       	
           Sn_X_i(i,j)=(y(i,j+1)-y(i,j))  !Ãæ»ýÊ¸Á¿
           Sn_Y_i(i,j)=-(x(i,j+1)-x(i,j))
@@ -44,8 +44,8 @@
 !
 !     j face: surface vector components, grid velocity, shifted volume
 !
-      do i=ib,im-1
-      do j=jb,jm
+      do i=ib-1,im
+      do j=jb-1,jm+1
           
           Sn_X_j(i,j)=-(y(i+1,j)-y(i,j))
           Sn_Y_j(i,j)=(x(i+1,j)-x(i,j))
@@ -58,8 +58,8 @@
       
 !     interpolation coefficient
 
-      do i=ib,im-1
-      do j=jb,jm-1
+      do i=ib-1,im
+      do j=jb-1,jm
  !      interface pisition     
       xw=0.5*(x(i,j)+x(i,j+1))
       yw=0.5*(y(i,j)+y(i,j+1))
@@ -94,8 +94,8 @@
 
       use main
 
-      do i=ib,im-1
-      do j=jb,jm-1
+      do i=ib-1,im
+      do j=jb-1,jm
       
           Vcell(i,j)=0.5*((x(i+1,j+1)-x(i,j))*&
      &                    (y(i,j+1)-y(i+1,j))-&

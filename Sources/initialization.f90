@@ -66,6 +66,30 @@
         end do
         
       close(5)
+      
+      i=ib
+      do j=jb,jm
+      x(i-1,j)=2.0*x(i,j)-x(i+1,j)
+      y(i-1,j)=y(i,j)
+      end do
+      
+      i=im
+      do j=jb,jm
+      x(i+1,j)=2.0*x(i,j)-x(i-1,j)
+      y(i+1,j)=y(i,j)
+      end do
+      
+      j=jb
+      do i=ib-1,im+1
+      x(i,j-1)=x(i,j)
+      y(i,j-1)=2.0*y(i,j)-y(i,j+1)
+      end do
+      
+      j=jm
+      do i=ib-1,im+1
+      x(i,j+1)=x(i,j)
+      y(i,j+1)=2.0*y(i,j)-y(i,j-1)
+      end do
 !
 !     end of data input section
 !     -------------------------
@@ -169,6 +193,8 @@
                    vy(i,j)=Vy_inlet
                     p(i,j)=p_inlet
                     Mu_L(i,j)=Mu_inlet
+                    Mu_E(i,j)=Mu_inlet
+                    T(i,j)=T_inlet
 
       end do
       end do

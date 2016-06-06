@@ -49,7 +49,7 @@
 !     n: accumulated time step of the computation
       istart=istart+1
       
-      if(mod(n,1).eq.0) then
+      if(mod(n,10).eq.0) then
           write(*,*) 'now, computing the ',n,'th step'
           write(2,*) 'now, computing the ',n,'th step'
       end if
@@ -125,7 +125,7 @@
       end do
       end do
       
-      if(mod(n,1).eq.0) then
+      if(mod(n,10).eq.0) then
           write(*,*) 'time', ttime*L_ref/V_ref
           write(*,*) rsm1,imax1,jmax1
           write(*,*) rsm2,imax2,jmax2

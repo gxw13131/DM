@@ -86,7 +86,7 @@
       do j=jb,jm-1
       do i=ib,im
       ! linear average to interpolate,
-      ! distance weight is used to deal with non-homogeneous grid
+      ! distance weight is used to deal with non-homogeneous grid  
           alsinv=1./(L_Cell_x(i,j)+L_Cell_x(i-1,j))
           uil (i,j)=(L_Cell_x(i,j)*vx (i-1,j)+L_Cell_x(i-1,j)*vx (i,j))&
      &                  *alsinv
@@ -143,7 +143,7 @@
       alimiter(var1,var2)=(var1*(var2*var2+2.*epsm*epsm)+&
      &                     var2*(2.*var1*var1+epsm*epsm))/&
      &            (2.*var1*var1-var1*var2+2.*var2*var2+3.*epsm*epsm) &
-     &            *0.5*abs(sign(one,var1)+sign(one,var2)) 
+     &            *0.5*abs(sign(1.0,var1)+sign(1.0,var2)) 
      
    !   alimiter(var1,var2)=2./3.*var1+1./3.*var2
       epsm=EPSILON
@@ -869,7 +869,9 @@
 !
       TT=T(i,j)*T_ref
       Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
-      Mu_E(i,j)=Mu_L(i,j) !+Mu_T(i,j) !for turbulence!!
+      
+      Mu_T(i,j)=Mu_L(i,j)*5.0
+      Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
       end do
       end do
      
