@@ -28,12 +28,15 @@
 !     read constants and CFL number 
 !     ------------------------------
 !
-      read(4,*) cp,Gamma,Pr_L
+      !read(4,*) cp,Gamma,Pr_L
 !         cp: specfic heat at constant pressure
 !         Gamma: ratio of specific heat
 !         Pr_L:Prandt.al number
-      Pr_E=Pr_L
-      Pr_T=Pr_L
+      !R_air=287.0
+      !Gamma=1.4
+      !Pr_L=0.72
+      !Pr_E=Pr_L
+      !Pr_T=Pr_L
       
       read(4,*) cfl
 !         cfl: cfl number
@@ -66,6 +69,23 @@
         end do
         
       close(5)
+      
+      !============================
+      ! boundary conditions:
+      R_air=287.0
+      Gamma=1.4
+      Pr_L=0.72
+      Pr_E=Pr_L
+      Pr_T=Pr_L
+      
+      Vx_inlet=1000.0
+      Vy_inlet=0.0
+      p_inlet=101325.0
+      T_inlet=288.0
+      rho_inlet=p_inlet/T_inlet/R_air
+      Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
+      P_out=0.0
+      !===============================
       
       i=ib
       do j=jb,jm
@@ -156,8 +176,8 @@
       Gamma1=Gamma-1
       Gamma2=(Gamma-1.0)/Gamma
       Gamma3=1.0/Gamma2
-      cv=cp/Gamma
-      R_air=cp-cv
+      cp=R_air*Gamma3
+      
 
 !
 !     compute aera vectors
@@ -249,9 +269,8 @@
       do i=ib,im-1
       do j=jb,jm-1
       TT=T_Inlet*T_ref
-      Mu_L(i,j)=1.458*abs(TT)**1.5/(TT+110.4)*1.0d-6/&
-         (Rho_ref*V_ref*L_ref)
-     Mu_E(i,j)=Mu_L(i,j)
+      Mu_L(i,j)=1.458*abs(TT)**1.5/(TT+110.4)*1.0d-6/(Rho_ref*V_ref*L_ref)
+      Mu_E(i,j)=Mu_L(i,j)
       end do
       end do
       

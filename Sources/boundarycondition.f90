@@ -37,7 +37,7 @@
      !outlet
       i=im
      
-      do j=jb-1,jm-1
+      do j=jb-1,jm
      
   !    p (i,j)=max(2.*p(i-1,j)-p(i-2,j),1.0e-10) 
   !    vx(i,j)=2.*vx(i-1,j)-vx(i-2,j)
@@ -68,7 +68,7 @@
       j=jb
       
       do i=ib,im-1
-      L_Cell_y(i,j-1)=L_Cell_y(i,j)
+      !L_Cell_y(i,j-1)=L_Cell_y(i,j)
        
       xhalf=0.5*(x(i,j)+x(i+1,j))
       if(xhalf>=1.) then  !x<1,¾ùÔÈÀ´Á÷Ìõ¼þ£¬·ñÔò¹Ì±ÚÌõ¼þ
@@ -78,15 +78,17 @@
       rho(i,j-1)=rho(i,j)
       Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
-      T(i,j-1)=2.0*T_inlet-T(i,j)
+      T(i,j-1)=T(i,j) !adiabatic wall
+      !T(i,j-1)=2.0*T_inlet-T(i,j) !isothermal wall
       
       else
       vx(i,j-1)=vx(i,j)
-      vy(i,j-1)=-vy(i,j)
-      p (i,j-1)=p (i,j)
+      vy(i,j-1)=vy(i,j)
+      p(i,j-1)=p(i,j)
       rho(i,j-1)=rho(i,j)
       Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
+      T(i,j-1)=T(i,j)
       end if
       end do
       
@@ -101,7 +103,7 @@
       rho(i,j+1)=rho(i,j)
       Mu_E(i,j+1)=Mu_E(i,j)
       Mu_L(i,j+1)=Mu_L(i,j)
-      L_Cell_y(i,j+1)=L_Cell_y(i,j)
+      T(i,j+1)=T(i,j)
       
       end do
        
@@ -156,8 +158,8 @@
       	
     xhalf=0.5*(x(i,j)+x(i+1,j))
       if(xhalf>=1.0) then  !x<1,¾ùÔÈÀ´Á÷Ìõ¼þ£¬·ñÔò¹Ì±ÚÌõ¼þ  
-      !ujl(i,j)=0.0
-      !vjl(i,j)=0.0
+      ujl(i,j)=0.0
+      vjl(i,j)=0.0
       ujr(i,j)=ujl(i,j)
       vjr(i,j)=vjl(i,j)
       !pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
@@ -166,7 +168,7 @@
       rjr(i,j)=rjl(i,j)
       else
       ujl(i,j)=0.5*(vx(i,j)+vx(i,j-1))
-      vjl(i,j)=0.5*(vy(i,j)+vy(i,j))
+      vjl(i,j)=0.5*(vy(i,j)+vy(i,j-1))
       pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
       rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
       end if

@@ -20,7 +20,7 @@
             open(30,file=nam)
             write(30,*) 'title="contour"'
             write(30,*) 'variables="x","y","u","v",'
-            write(30,*)'"p","den","mach","entropy","mu"'
+            write(30,*)'"p","den","T","mach","entropy","mu"'
      
             write(30,*) 'zone i=',im-ib,' j=',jm-jb &
                    &,' f=point'
@@ -35,14 +35,15 @@
              
              pcar=p(i,j)*Rho_ref*V_ref*V_ref
              rcar=rho(i,j)*Rho_ref
+             TT=T(i,j)*T_ref
              entr=pcar/rcar**Gamma
              amach=sqrt(ucar*ucar+vcar*vcar)&
      &             /sqrt(Gamma*pcar/rcar)
              vmur=Mu_E(i,j)*Rho_ref*V_ref*L_ref
              
-             write(30,"(E9.3,1X,  E9.3,1X,   E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3, 1X, E9.3, 1X, E9.3)") xcar,ycar&
+             write(30,"(E9.3,1X,  E9.3,1X,   E9.3,1X,  E9.3,1X,E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3,1X,  E9.3, 1X, E9.3, 1X, E9.3)") xcar,ycar&
      &                  ,ucar,vcar&
-     &                  ,pcar,rcar,amach,entr,vmur
+     &                  ,pcar,rcar,TT,amach,entr,vmur
            end do
            end do
            close(30)

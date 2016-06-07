@@ -10,21 +10,18 @@
       
       logical :: steady1
       
-      !============================
-      ! boundary conditions:
-      real :: Vx_inlet=1000.0
-      real :: Vy_inlet=0.0
-      real :: rho_inlet=1.224
-      real :: p_inlet=101325.0
-      real :: Mu_inlet=1.789e-5
-      real :: T_inlet=287.0
-      real :: P_out=0.0
+     
+      
       integer :: &
      & ib,jb &
      &,im,jm,irsolver
      
       REAL*8 :: &
      & L_ref,V_ref,Rho_ref,T_ref,Ma_ref
+      !============================
+      ! boundary conditions:
+     REAL*8 :: &
+     Vx_inlet,Vy_inlet,p_inlet,T_inlet,Rho_inlet,Mu_inlet,P_out
       
       REAL*8 :: &
      & rho(iq,jq),p(iq,jq)&
@@ -35,8 +32,7 @@
      &,SumFlux_rho(iq,jq),SumFlux_rho_Et(iq,jq)&
      &,SumFlux_rho_vx(iq,jq),SumFlux_rho_vy(iq,jq)&
      &,Rho_m1(iq,jq),Rho_Et_m1(iq,jq)&
-     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)
-     
+     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)     
      
       REAL*8 :: &
      & x(iq,jq),y(iq,jq)&

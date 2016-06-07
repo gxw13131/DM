@@ -863,7 +863,7 @@
       
       
       vsrh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
-      p(i,j)=Gamma1*(rho_Et(i,j)-vsrh*rho(i,j))
+      p(i,j)=max(0.0,Gamma1*(rho_Et(i,j)-vsrh*rho(i,j)))
       Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsrh)+vsrh
       T(i,j)=p(i,j)*RhoInv/R_air
 !
