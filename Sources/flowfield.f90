@@ -1,15 +1,12 @@
 
 !====================================================================================
-      subroutine time_step
-      !===================
+      subroutine radius
       
       use main  
-      
-!
 !     compute spectral radii
 !     ----------------------
 !
-      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
+      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Vjbc,Sjj,Army,Ste
       real*8 :: ttg
       do j=jb,jm-1
       do i=ib,im-1
@@ -25,7 +22,7 @@
           armx=sqrt(sii)
           velpro=vx(i,j)*arx+vy(i,j)*ary+vibc
           acoa=armx*aco
-          eox1=abs(velpro)+acoa
+          radius_i(i,j)=abs(velpro)+acoa!+2.0*sii*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)
 
 !       j direction
           arx=0.5*(Sn_X_j(i,j)+Sn_X_j(i,j+1))
@@ -35,10 +32,29 @@
           army=sqrt(sjj)
           velpro=vx(i,j)*arx+vy(i,j)*ary+vjbc
           acoa=army*aco
-          eoy1=abs(velpro)+acoa
-          
-          ste=cfl*Vcell(i,j)/(eox1+eoy1)
-          step(i,j)=ste
+          radius_j(i,j)=abs(velpro)+acoa!+2.0*sjj*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)
+!
+      end do
+      end do
+      
+      end subroutine
+
+      
+      
+      subroutine time_step
+      !===================
+      
+      use main  
+      
+!
+!     compute spectral radii
+!     ----------------------
+!
+      real*8 :: ttg
+      do j=jb,jm-1
+      do i=ib,im-1
+      
+          step(i,j)=cfl*Vcell(i,j)/(radius_i(i,j)+radius_j(i,j))
 !
       end do
       end do
@@ -275,10 +291,10 @@
 !
       do j=jb-1,jm+1
       
-      SumFlux_rho(i,j)=0.
-      SumFlux_rho_Et(i,j)=0.
-      SumFlux_rho_vx(i,j)=0.
-      SumFlux_rho_vy(i,j)=0.
+      F_rho(i,j)=0.
+      F_rho_Et(i,j)=0.
+      F_rho_vx(i,j)=0.
+      F_rho_vy(i,j)=0.
       
       
       
@@ -418,15 +434,15 @@
     
       
      
-      SumFlux_rho(i,j)=SumFlux_rho(i,j)-droi
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-drei
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-dxi
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-dyi
+      F_rho(i,j)=F_rho(i,j)-droi
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drei
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxi
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyi
      
-      SumFlux_rho(i-1,j)=SumFlux_rho(i-1,j)+droi
-      SumFlux_rho_Et(i-1,j)=SumFlux_rho_Et(i-1,j)+drei
-      SumFlux_rho_vx(i-1,j)=SumFlux_rho_vx(i-1,j)+dxi
-      SumFlux_rho_vy(i-1,j)=SumFlux_rho_vy(i-1,j)+dyi
+      F_rho(i-1,j)=F_rho(i-1,j)+droi
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+drei
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dxi
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dyi
       
       
       
@@ -555,15 +571,15 @@
      &            -vjb(i,j)*(pl+pr)-adre)
            
       
-      SumFlux_rho(i,j)=SumFlux_rho(i,j)-droj
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-drej
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-dxj
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-dyj
+      F_rho(i,j)=F_rho(i,j)-droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
       
-      SumFlux_rho(i,j-1)=SumFlux_rho(i,j-1)+droj
-      SumFlux_rho_Et(i,j-1)=SumFlux_rho_Et(i,j-1)+drej
-      SumFlux_rho_vx(i,j-1)=SumFlux_rho_vx(i,j-1)+dxj
-      SumFlux_rho_vy(i,j-1)=SumFlux_rho_vy(i,j-1)+dyj
+      F_rho(i,j-1)=F_rho(i,j-1)+droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
       
       
       
@@ -604,10 +620,10 @@
       do j=jb-1,jm+1
        do i=ib-1,im+1
       
-      SumFlux_rho(i,j)=0.
-      SumFlux_rho_Et(i,j)=0.
-      SumFlux_rho_vx(i,j)=0.
-      SumFlux_rho_vy(i,j)=0.
+      F_rho(i,j)=0.
+      F_rho_Et(i,j)=0.
+      F_rho_vx(i,j)=0.
+      F_rho_vy(i,j)=0.
       
       
       
@@ -692,15 +708,15 @@
     
       
      
-      SumFlux_rho(i,j)=SumFlux_rho(i,j)-droi
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-drei
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-dxi
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-dyi
+      F_rho(i,j)=F_rho(i,j)-droi
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drei
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxi
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyi
      
-      SumFlux_rho(i-1,j)=SumFlux_rho(i-1,j)+droi
-      SumFlux_rho_Et(i-1,j)=SumFlux_rho_Et(i-1,j)+drei
-      SumFlux_rho_vx(i-1,j)=SumFlux_rho_vx(i-1,j)+dxi
-      SumFlux_rho_vy(i-1,j)=SumFlux_rho_vy(i-1,j)+dyi
+      F_rho(i-1,j)=F_rho(i-1,j)+droi
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+drei
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dxi
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dyi
       
       
       
@@ -776,15 +792,15 @@
      &            -vjb(i,j)*(pl+pr)-coey*(rr*er-rl*el)) 
            
       
-      SumFlux_rho(i,j)=SumFlux_rho(i,j)-droj
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-drej
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-dxj
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-dyj
+      F_rho(i,j)=F_rho(i,j)-droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
       
-      SumFlux_rho(i,j-1)=SumFlux_rho(i,j-1)+droj
-      SumFlux_rho_Et(i,j-1)=SumFlux_rho_Et(i,j-1)+drej
-      SumFlux_rho_vx(i,j-1)=SumFlux_rho_vx(i,j-1)+dxj
-      SumFlux_rho_vy(i,j-1)=SumFlux_rho_vy(i,j-1)+dyj
+      F_rho(i,j-1)=F_rho(i,j-1)+droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
       
       
       
@@ -815,16 +831,16 @@
       do  i=ib,im-1
       
       rho(i,j)=(1.-rkpa(nrk))*Rho_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*SumFlux_rho(i,j)
+     &              rkpa(nrk)*step(i,j)*F_rho(i,j)
      
       rho_Et(i,j)=(1.-rkpa(nrk))*Rho_Et_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_Et(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*SumFlux_rho_Et(i,j)
+     &              rkpa(nrk)*step(i,j)*F_rho_Et(i,j)
      
       rho_vx(i,j)=(1.-rkpa(nrk))*Rho_vx_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_vx(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*SumFlux_rho_vx(i,j)
+     &              rkpa(nrk)*step(i,j)*F_rho_vx(i,j)
      
        rho_vy(i,j)=(1.-rkpa(nrk))*Rho_vy_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_vy(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*SumFlux_rho_vy(i,j)
+     &              rkpa(nrk)*step(i,j)*F_rho_vy(i,j)
      
       end do
       end do

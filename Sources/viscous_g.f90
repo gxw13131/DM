@@ -34,16 +34,16 @@ subroutine viscous_Flux
       LFlux_Et(i,j)=(uil(i,j)*Tau_xx+vil(i,j)*Tau_xy+k_Fourier*dx_i(T,i,j))*sav1 &
       & +(uil(i,j)*Tau_xy+vil(i,j)*Tau_yy+k_Fourier*dy_i(T,i,j))*sav2
       
-      !SumFlux_rho(i,j)=SumFlux_rho(i,j)  ! no Flux to add
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-LFlux_Et(i,j)
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-LFlux_rho_vx
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-LFlux_rho_vy
+      !F_rho(i,j)=F_rho(i,j)  ! no Flux to add
+      F_rho_Et(i,j)=F_rho_Et(i,j)-LFlux_Et(i,j)
+      F_rho_vx(i,j)=F_rho_vx(i,j)-LFlux_rho_vx
+      F_rho_vy(i,j)=F_rho_vy(i,j)-LFlux_rho_vy
      
-      !SumFlux_rho(i-1,j)=SumFlux_rho(i-1,j) ! no Flux to add
+      !F_rho(i-1,j)=F_rho(i-1,j) ! no Flux to add
       !RFlux(i-1,j)=LFlux(i,j)
-      SumFlux_rho_Et(i-1,j)=SumFlux_rho_Et(i-1,j)+LFlux_Et(i,j) 
-      SumFlux_rho_vx(i-1,j)=SumFlux_rho_vx(i-1,j)+LFlux_rho_vx
-      SumFlux_rho_vy(i-1,j)=SumFlux_rho_vy(i-1,j)+LFlux_rho_vy
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+LFlux_Et(i,j) 
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+LFlux_rho_vx
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+LFlux_rho_vy
       end do
       end do
 
@@ -78,15 +78,15 @@ subroutine viscous_Flux
       & +(ujl(i,j)*Tau_xy+vjl(i,j)*Tau_yy+k_Fourier*dy_j(T,i,j))*sav2
       
       
-      !SumFlux_rho(i,j)=SumFlux_rho(i,j) ! no Flux to add
-      SumFlux_rho_Et(i,j)=SumFlux_rho_Et(i,j)-LFlux_Et(i,j)
-      SumFlux_rho_vx(i,j)=SumFlux_rho_vx(i,j)-LFlux_rho_vx
-      SumFlux_rho_vy(i,j)=SumFlux_rho_vy(i,j)-LFlux_rho_vy
+      !F_rho(i,j)=F_rho(i,j) ! no Flux to add
+      F_rho_Et(i,j)=F_rho_Et(i,j)-LFlux_Et(i,j)
+      F_rho_vx(i,j)=F_rho_vx(i,j)-LFlux_rho_vx
+      F_rho_vy(i,j)=F_rho_vy(i,j)-LFlux_rho_vy
       
-      !SumFlux_rho(i,j-1)=SumFlux_rho(i,j-1)    ! no Flux to add
-      SumFlux_rho_Et(i,j-1)=SumFlux_rho_Et(i,j-1)+LFlux_Et(i,j)
-      SumFlux_rho_vx(i,j-1)=SumFlux_rho_vx(i,j-1)+LFlux_rho_vx
-      SumFlux_rho_vy(i,j-1)=SumFlux_rho_vy(i,j-1)+LFlux_rho_vy
+      !F_rho(i,j-1)=F_rho(i,j-1)    ! no Flux to add
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+LFlux_Et(i,j)
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+LFlux_rho_vx
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+LFlux_rho_vy
       end do
       end do
     

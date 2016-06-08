@@ -59,6 +59,7 @@
       if(mod(n,iprint).eq.0) is_print=1
       
 !     compute the minimum time step to guarantee CFL condition
+      call radius
       call time_step
 !     ============= 
 !     
@@ -137,10 +138,18 @@
           write(2,*) rsm3,imax3,jmax3
           write(2,*) rsm4,imax4,jmax4
       end if
+
       
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! save solution
       do i=ib,im
       do j=jb,jm 
-!
+!       save last step solution
+      Rho_m2(i,j)=Rho_m1(i,j)
+      Rho_vx_m2(i,j)=rho_vx_m1(i,j)
+      Rho_vy_m2(i,j)=rho_vy_m(i,j)
+      Rho_Et_m2(i,j)=rho_Et_m1(i,j)
+!       save current step solution      
       Rho_m1(i,j)=rho(i,j)
       Rho_vx_m1(i,j)=rho_vx(i,j)
       Rho_vy_m1(i,j)=rho_vy(i,j)

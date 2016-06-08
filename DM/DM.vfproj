@@ -51,6 +51,7 @@
 		<File RelativePath="..\Sources\flowfield.f90"/>
 		<File RelativePath="..\Sources\geometry.f90"/>
 		<File RelativePath="..\Sources\initialization.f90"/>
+		<File RelativePath=".\LUSGS_g.f90"/>
 		<File RelativePath="..\Sources\module.f90"/>
 		<File RelativePath="..\Sources\output.f90"/>
 		<File RelativePath="..\Sources\solver.f90"/>

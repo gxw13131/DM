@@ -2,15 +2,14 @@
       implicit none
       integer :: i,j
       integer :: iq,jq,ngmax
-      real :: EPSILON,EPSILON1,INFINITY
+      real :: EPSILON,EPSILON1,INFINITY,pi
       parameter(iq=405,jq=105,ngmax=max(iq,jq)+5)
       parameter(EPSILON=1.0d-20,EPSILON1=1.0d-10,INFINITY=1.0d20)
+      parameter(pi=3.1415926535897932384626)
      ! parameter(one=1.0,zero=0.0)  
       
       
       logical :: steady1
-      
-     
       
       integer :: &
      & ib,jb &
@@ -23,17 +22,36 @@
      REAL*8 :: &
      Vx_inlet,Vy_inlet,p_inlet,T_inlet,Rho_inlet,Mu_inlet,P_out
       
+     !CURRENT STEP SOLUTION
       REAL*8 :: &
-     & rho(iq,jq),p(iq,jq)&
-     &,rho_Et(iq,jq),T(iq,jq)&
+     & rho(iq,jq)&
+     &,rho_Et(iq,jq)&
      &,rho_vx(iq,jq),rho_vy(iq,jq)&
-     &,vx(iq,jq),vy(iq,jq)& !u,v
-     &,Ht(iq,jq)&
-     &,SumFlux_rho(iq,jq),SumFlux_rho_Et(iq,jq)&
-     &,SumFlux_rho_vx(iq,jq),SumFlux_rho_vy(iq,jq)&
-     &,Rho_m1(iq,jq),Rho_Et_m1(iq,jq)&
-     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)     
      
+     ! primitive variables
+     REAL*8 :: &
+     &p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
+     
+     ! SUM Flux
+     REAL*8 :: &
+     &F_rho(iq,jq),F_rho_Et(iq,jq)&
+     &,F_rho_vx(iq,jq),F_rho_vy(iq,jq)
+     
+     ! LAST STEP SOLUTION
+     REAL*8 :: &
+     &Rho_m1(iq,jq),Rho_Et_m1(iq,jq)&
+     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)     
+  
+     ! LAST  2 STEP SOLUTION
+     REAL*8 :: &
+     &Rho_m2(iq,jq),Rho_Et_m2(iq,jq)&
+     &,Rho_vx_m2(iq,jq),Rho_vy_m2(iq,jq) 
+     
+     
+     REAL*8 :: radius_i(iq,jq),radius_j(iq,jq) !SPECTRAL RADIUS
+     
+     !===================================================
+     !      geometry variables
       REAL*8 :: &
      & x(iq,jq),y(iq,jq)&
      &,xc(iq,jq),yc(iq,jq),step(iq,jq)&
@@ -49,7 +67,10 @@
       REAL*8 :: &
 !
      & vib(iq,jq),vjb(iq,jq)
-!       
+
+     
+     
+     !       
       REAL*8 :: &
 !      
      &uil (iq,jq),uir(iq,jq),&
@@ -75,7 +96,7 @@
 !     
       REAL*8 :: &
 !
-     & cp,Gamma,pi,Gamma2,Gamma1,rcp,R_air,Gamma3,cv,Pr_L,Pr_T,Pr_E
+     & cp,Gamma,Gamma2,Gamma1,rcp,R_air,Gamma3,cv,Pr_L,Pr_T,Pr_E
 !     
 !
       REAL*8 :: &

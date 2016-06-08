@@ -26,28 +26,39 @@
 !         icgl=1: gloal time step; =0 local time step
 !         irsolver=0 Roe; =1 Lax -riemann solver
 !     read constants and CFL number 
+      read(4,*) cfl
+!         cfl: cfl number
 !     ------------------------------
-!
+
+      
       !read(4,*) cp,Gamma,Pr_L
 !         cp: specfic heat at constant pressure
 !         Gamma: ratio of specific heat
 !         Pr_L:Prandt.al number
-      !R_air=287.0
-      !Gamma=1.4
-      !Pr_L=0.72
-      !Pr_E=Pr_L
-      !Pr_T=Pr_L
+      R_air=287.0
+      Gamma=1.4
+      Pr_L=0.72
+      Pr_E=Pr_L
+      Pr_T=Pr_L
       
-      read(4,*) cfl
-!         cfl: cfl number
 
-      pi=3.1415926535897932384626
+
+     
 
 !     read inlet/outlet parameters: uniform inlet, need to be modified.
 !     -----------------------------------------------------------------
-!
-!      read(4,*) Vx_Inlet,Vy_Inlet,p_Inlet,T_Inlet
-!      read(4,*) p_Out
+!     read(4,*) Vx_inlet,Vy_inlet,p_inlet,T_inlet,p_out
+!============================
+      ! boundary conditions:
+      
+      Vx_inlet=1000.0
+      Vy_inlet=0.0
+      p_inlet=101325.0
+      T_inlet=50.0
+      rho_inlet=p_inlet/T_inlet/R_air
+      Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
+      P_out=0.0
+      !===============================
 !
       close(4)
 !===========end of the input file bl.in=========================
@@ -70,22 +81,7 @@
         
       close(5)
       
-      !============================
-      ! boundary conditions:
-      R_air=287.0
-      Gamma=1.4
-      Pr_L=0.72
-      Pr_E=Pr_L
-      Pr_T=Pr_L
       
-      Vx_inlet=1000.0
-      Vy_inlet=0.0
-      p_inlet=101325.0
-      T_inlet=288.0
-      rho_inlet=p_inlet/T_inlet/R_air
-      Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
-      P_out=0.0
-      !===============================
       
       i=ib
       do j=jb,jm
@@ -235,6 +231,10 @@
       Rho_vx_m1(i,j)=rho_vx(i,j)
       Rho_vy_m1(i,j)=rho_vy(i,j)
       
+      Rho_m2(i,j)=rho(i,j)
+      Rho_Et_m2(i,j)=rho_Et(i,j)
+      Rho_vx_m2(i,j)=rho_vx(i,j)
+      Rho_vy_m2(i,j)=rho_vy(i,j)
       end do
       end do
            
