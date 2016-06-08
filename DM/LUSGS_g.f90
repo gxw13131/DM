@@ -3,7 +3,7 @@ subroutine LUSGS()
 !
       use main
       
-      real*8 :: dt_physics=1E20  !vitual time step
+      real*8 :: dt_physics=1E20  !physics time step
       real*8 :: Ng(iq,jq),dt(iq,jq)
       real*8 :: temp
       real*8 :: AdRho,AdRhoVx,AdRhoVy,AdRhoEt 
@@ -16,15 +16,16 @@ subroutine LUSGS()
       do i=ib,im-1
       
       dt(i,j)=1.0/(1.0/step(i,j)+1.5/dt_physics)
-      Ng(i,i)=1.0+(radius_i(i,j)+radius_j(i,j))/dt(i,j)/Vcell(i,j)
-      F_Rho(i,j)=F_Rho(i,j)/Vcell(i,j)&
-                       &-(1.5*Rho(i,j)-2.0*Rho_m1(i,j)+Rho_m2(i,j))/step(i,j)
-      F_Rho_vx(i,j)=F_Rho_vx(i,j)/Vcell(i,j)&
-                       &-(1.5*Rho_vx(i,j)-2.0*Rho_vx_m1(i,j)+Rho_vx_m2(i,j))/step(i,j)
-      F_Rho_vy(i,j)=F_Rho_vy(i,j)/Vcell(i,j)&
-                       &-(1.5*Rho_vy(i,j)-2.0*Rho_vy_m1(i,j)+Rho_vy_m2(i,j))/step(i,j)
-      F_Rho_Et(i,j)=F_Rho_Et(i,j)/Vcell(i,j)&
-                       &-(1.5*Rho_Et(i,j)-2.0*Rho_Et_m1(i,j)+Rho_Et_m2(i,j))/step(i,j)
+      Ng(i,j)=1.0+(radius_i(i,j)+radius_j(i,j))*dt(i,j)/Vcell(i,j)
+      
+      F_Rho(i,j)    =F_Rho(i,j)/Vcell(i,j)&
+                       &-(1.5*Rho(i,j)      -2.0*Rho_m1(i,j)    +0.5*Rho_m2(i,j))/dt_physics
+      F_Rho_vx(i,j) =F_Rho_vx(i,j)/Vcell(i,j)&
+                       &-(1.5*Rho_vx(i,j)   -2.0*Rho_vx_m1(i,j) +0.5*Rho_vx_m2(i,j))/dt_physics
+      F_Rho_vy(i,j) =F_Rho_vy(i,j)/Vcell(i,j)&
+                       &-(1.5*Rho_vy(i,j)   -2.0*Rho_vy_m1(i,j) +0.5*Rho_vy_m2(i,j))/dt_physics
+      F_Rho_Et(i,j) =F_Rho_Et(i,j)/Vcell(i,j)&
+                       &-(1.5*Rho_Et(i,j)   -2.0*Rho_Et_m1(i,j) +0.5*Rho_Et_m2(i,j))/dt_physics
       end do
       end do
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -41,50 +42,51 @@ subroutine LUSGS()
       SDx=0.5*(Sn_X_i(i,j)+Sn_X_i(i-1,j))
       SDy=0.5*(Sn_Y_i(i,j)+SN_Y_i(i-1,j))
       
-      Vx_g=Vx(i-1,j)
-      Vy_g=Vy(i-1,j)
-      p_g=p(i-1,j)
-      rho_g=rho(i-1,j)
+      Vx_g  =Vx(i-1,j)
+      Vy_g  =Vy(i-1,j)
+      p_g   =p(i-1,j)
+      rho_g =rho(i-1,j)
       
-      dRhoM=F_Rho(i-1,j)
-      dRhoVxM=F_Rho_Vx(i-1,j)
-      dRhoVyM=F_Rho_Vy(i-1,j)
-      dRhoEtM=F_Rho_Et(i-1,j)
+      dRhoM     =F_Rho(i-1,j)
+      dRhoVxM   =F_Rho_Vx(i-1,j)
+      dRhoVyM   =F_Rho_Vy(i-1,j)
+      dRhoEtM   =F_Rho_Et(i-1,j)
       
       call AdU(Vx_g,Vy_g,SDx,SDy,p_g,rho_g,dRhoM,dRhoVxM,dRhoVyM,dRhoEtM)
-      dRhoI=0.5*(AdRho+radius_i(i-1,j)*dRhoM)
-      dRhoVxI=0.5*(AdRhoVx+radius_i(i-1,j)*dRhoVxM)
-      dRhovyI=0.5*(AdRhoVy+radius_i(i-1,j)*dRhoVyM)
-      dRhoEtI=0.5*(AdRhoEt+radius_i(i-1,j)*dRhoEtM)
+      dRhoI     =0.5*(AdRho     +radius_i(i-1,j)*dRhoM)
+      dRhoVxI   =0.5*(AdRhoVx   +radius_i(i-1,j)*dRhoVxM)
+      dRhovyI   =0.5*(AdRhoVy   +radius_i(i-1,j)*dRhoVyM)
+      dRhoEtI   =0.5*(AdRhoEt   +radius_i(i-1,j)*dRhoEtM)
       end if
       
       if(j==jb) then
-      dRhoJ=0.0
-      dRhoVxJ=0.0
-      dRhoVyJ=0.0
-      dRhoEtJ=0.0
+      dRhoJ     =0.0
+      dRhoVxJ   =0.0
+      dRhoVyJ   =0.0
+      dRhoEtJ   =0.0
       else 
       SDx=0.5*(Sn_X_j(i,j)+Sn_X_j(i,j-1))
-      SDy=0.5*(Sn_Y_j(i,j)+SN_Y_j(i,j-1))
+      SDy=0.5*(Sn_Y_j(i,j)+Sn_Y_j(i,j-1))
       
-      Vx_g=Vx(i,j-1)
-      Vy_g=Vy(i,j-1)
-      p_g=p(i,j-1)
-      rho_g=rho(i,j-1)
+      Vx_g  =Vx(i,j-1)
+      Vy_g  =Vy(i,j-1)
+      p_g   =p(i,j-1)
+      rho_g =rho(i,j-1)
       
-      dRhoM=F_Rho(i,j-1)
-      dRhoVxM=F_Rho_Vx(i,j-1)
-      dRhoVyM=F_Rho_Vy(i,j-1)
-      dRhoEtM=F_Rho_Et(i,j-1)
+      dRhoM     =F_Rho(i,j-1)
+      dRhoVxM   =F_Rho_Vx(i,j-1)
+      dRhoVyM   =F_Rho_Vy(i,j-1)
+      dRhoEtM   =F_Rho_Et(i,j-1)
       
       call AdU(Vx_g,Vy_g,SDx,SDy,p_g,rho_g,dRhoM,dRhoVxM,dRhoVyM,dRhoEtM)
       
-      dRhoJ=0.5*(AdRho+radius_j(i-1,j)*dRhoM)
-      dRhoVxJ=0.5*(AdRhoVx+radius_j(i-1,j)*dRhoVxM)
-      dRhoVyJ=0.5*(AdRhoVy+radius_j(i-1,j)*dRhoVyM)
-      dRhoEtJ=0.5*(AdRhoEt+radius_j(i-1,j)*dRhoEtM)
+      dRhoJ     =0.5*(AdRho     +radius_j(i,j-1)*dRhoM)
+      dRhoVxJ   =0.5*(AdRhoVx   +radius_j(i,j-1)*dRhoVxM)
+      dRhoVyJ   =0.5*(AdRhoVy   +radius_j(i,j-1)*dRhoVyM)
+      dRhoEtJ   =0.5*(AdRhoEt   +radius_j(i,j-1)*dRhoEtM)
       end if
       temp=dt(i,j)/Ng(i,j)
+      
       F_Rho(i,j)    =(F_Rho(i,j)    +(dRhoI+dRhoJ)      /Vcell(i,j))*temp
       F_Rho_vx(i,j) =(F_Rho_vx(i,j) +(dRhoVxI+dRhoVxJ)  /Vcell(i,j))*temp
       F_Rho_vy(i,j) =(F_Rho_vy(i,j) +(dRhoVyI+dRhoVyJ)  /Vcell(i,j))*temp
@@ -107,21 +109,22 @@ subroutine LUSGS()
       SDx=0.5*(Sn_X_i(i+2,j)+Sn_X_i(i+1,j))
       SDy=0.5*(Sn_Y_i(i+2,j)+SN_Y_i(i+1,j))
       
-      Vx_g=Vx(i+1,j)
-      Vy_g=Vy(i+1,j)
-      p_g=p(i+1,j)
-      rho_g=rho(i+1,j)
+      Vx_g  =Vx(i+1,j)
+      Vy_g  =Vy(i+1,j)
+      p_g   =p(i+1,j)
+      rho_g =rho(i+1,j)
       
-      dRhoM=F_Rho(i+1,j)
-      dRhoVxM=F_Rho_Vx(i+1,j)
-      dRhoVyM=F_Rho_Vy(i+1,j)
-      dRhoEtM=F_Rho_Et(i+1,j)
+      dRhoM     =F_Rho(i+1,j)
+      dRhoVxM   =F_Rho_Vx(i+1,j)
+      dRhoVyM   =F_Rho_Vy(i+1,j)
+      dRhoEtM   =F_Rho_Et(i+1,j)
       
       call AdU(Vx_g,Vy_g,SDx,SDy,p_g,rho_g,dRhoM,dRhoVxM,dRhoVyM,dRhoEtM)
-      dRhoI=0.5*(AdRho-radius_i(i+1,j)*dRhoM)
-      dRhoVxI=0.5*(AdRhoVx-radius_i(i+1,j)*dRhoVxM)
-      dRhovyI=0.5*(AdRhoVy-radius_i(i+1,j)*dRhoVyM)
-      dRhoEtI=0.5*(AdRhoEt-radius_i(i+1,j)*dRhoEtM)
+      
+      dRhoI     =0.5*(AdRho     -radius_i(i+1,j)*dRhoM)
+      dRhoVxI   =0.5*(AdRhoVx   -radius_i(i+1,j)*dRhoVxM)
+      dRhovyI   =0.5*(AdRhoVy   -radius_i(i+1,j)*dRhoVyM)
+      dRhoEtI   =0.5*(AdRhoEt   -radius_i(i+1,j)*dRhoEtM)
       
       end if    !i direction
       
@@ -132,25 +135,28 @@ subroutine LUSGS()
       dRhoEtJ=0.0
       else
       SDx=0.5*(Sn_X_j(i,j+1)+Sn_X_j(i,j+2))
-      SDy=0.5*(Sn_Y_j(i,j+1)+SN_Y_j(i,j+2))
+      SDy=0.5*(Sn_Y_j(i,j+1)+Sn_Y_j(i,j+2))
       
-      Vx_g=Vx(i,j+1)
-      Vy_g=Vy(i,j+1)
-      p_g=p(i,j+1)
-      rho_g=rho(i,j+1)
+      Vx_g  =Vx(i,j+1)
+      Vy_g  =Vy(i,j+1)
+      p_g   =p(i,j+1)
+      rho_g =rho(i,j+1)
       
-      dRhoM=F_Rho(i,j+1)
-      dRhoVxM=F_Rho_Vx(i,j+1)
-      dRhoVyM=F_Rho_Vy(i,j+1)
-      dRhoEtM=F_Rho_Et(i,j+1)
+      dRhoM     =F_Rho(i,j+1)
+      dRhoVxM   =F_Rho_Vx(i,j+1)
+      dRhoVyM   =F_Rho_Vy(i,j+1)
+      dRhoEtM   =F_Rho_Et(i,j+1)
       call AdU(Vx_g,Vy_g,SDx,SDy,p_g,rho_g,dRhoM,dRhoVxM,dRhoVyM,dRhoEtM)
-      dRhoJ=0.5*(AdRho-radius_j(i,j+1)*dRhoM)
-      dRhoVxJ=0.5*(AdRhoVx-radius_j(i,j+1)*dRhoVxM)
-      dRhoVyJ=0.5*(AdRhoVy-radius_j(i,j+1)*dRhoVyM)
-      dRhoEtJ=0.5*(AdRhoEt-radius_j(i,j+1)*dRhoEtM)
+      
+      dRhoJ     =0.5*(AdRho     -radius_j(i,j+1)*dRhoM)
+      dRhoVxJ   =0.5*(AdRhoVx   -radius_j(i,j+1)*dRhoVxM)
+      dRhoVyJ   =0.5*(AdRhoVy   -radius_j(i,j+1)*dRhoVyM)
+      dRhoEtJ   =0.5*(AdRhoEt   -radius_j(i,j+1)*dRhoEtM)
       
       end if    !j direction
+      
       temp=dt(i,j)/Vcell(i,j)/Ng(i,j)
+      
       F_Rho(i,j)    =F_Rho(i,j)    -(dRhoI+dRhoJ)      *temp
       F_Rho_vx(i,j) =F_Rho_vx(i,j) -(dRhoVxI+dRhoVxJ)  *temp
       F_Rho_vy(i,j) =F_Rho_vy(i,j) -(dRhoVyI+dRhoVyJ)  *temp
@@ -162,7 +168,7 @@ subroutine LUSGS()
       do j=jb,jm
       do i=ib,im
       
-      Rho(i,j)      =Rho(i,j)+F_Rho(i,j)
+      Rho(i,j)      =Rho(i,j)   +F_Rho(i,j)
       Rho_Vx(i,j)   =Rho_Vx(i,j)+F_Rho_Vx(i,j)
       Rho_Vy(i,j)   =Rho_Vy(i,j)+F_Rho_Vy(i,j)
       Rho_Et(i,j)   =Rho_Et(i,j)+F_Rho_Et(i,j)

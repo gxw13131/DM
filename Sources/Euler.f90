@@ -70,7 +70,7 @@
 !     solve Euler equations
 !     ------------------
 !
-      call solver(1)
+      !call solver(1)
       call solver(2)
 !     subroutine solver: solve the ns equation for one Runge-Kutta stage      
       

@@ -54,7 +54,7 @@
       Vx_inlet=1000.0
       Vy_inlet=0.0
       p_inlet=101325.0
-      T_inlet=50.0
+      T_inlet=300.0
       rho_inlet=p_inlet/T_inlet/R_air
       Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
       P_out=0.0

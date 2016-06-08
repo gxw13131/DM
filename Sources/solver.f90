@@ -45,8 +45,8 @@
 !      CALL CPU_TIME ( time12 )
 !*****************************************************************************
 !     Runge-Kutta time stepping
-      call Runge_Kutta(nrk)
-      !call LUSGS()
+ !     call Runge_Kutta(nrk)
+      call LUSGS()
 !     =====================                
 !      CALL CPU_TIME ( time13 )
       
