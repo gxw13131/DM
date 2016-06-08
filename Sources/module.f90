@@ -26,11 +26,10 @@
       REAL*8 :: &
      & rho(iq,jq)&
      &,rho_Et(iq,jq)&
-     &,rho_vx(iq,jq),rho_vy(iq,jq)&
+     &,rho_vx(iq,jq),rho_vy(iq,jq)
      
      ! primitive variables
-     REAL*8 :: &
-     &p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
+     REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
      
      ! SUM Flux
      REAL*8 :: &

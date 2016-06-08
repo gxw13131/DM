@@ -820,6 +820,7 @@
       
       integer :: nrk
       REAL*8:: rkpa(2)
+      real*8 :: temp
       rkpa(1)=1.
       rkpa(2)=0.5
 !      
@@ -830,17 +831,18 @@
       do  j=jb,jm-1
       do  i=ib,im-1
       
-      rho(i,j)=(1.-rkpa(nrk))*Rho_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*F_rho(i,j)
+      temp=step(i,j)/Vcell(i,j)
+      rho(i,j)=(1.-rkpa(nrk))*Rho_m1(i,j)+rkpa(nrk)*rho(i,j)+&
+     &              rkpa(nrk)*F_rho(i,j)*temp
      
-      rho_Et(i,j)=(1.-rkpa(nrk))*Rho_Et_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_Et(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*F_rho_Et(i,j)
+      rho_Et(i,j)=(1.-rkpa(nrk))*Rho_Et_m1(i,j)+rkpa(nrk)*rho_Et(i,j)+&
+     &              rkpa(nrk)*F_rho_Et(i,j)*temp
      
-      rho_vx(i,j)=(1.-rkpa(nrk))*Rho_vx_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_vx(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*F_rho_vx(i,j)
+      rho_vx(i,j)=(1.-rkpa(nrk))*Rho_vx_m1(i,j)+rkpa(nrk)*rho_vx(i,j)+&
+     &              rkpa(nrk)*F_rho_vx(i,j)*temp
      
-       rho_vy(i,j)=(1.-rkpa(nrk))*Rho_vy_m1(i,j)*Vcell(i,j)+rkpa(nrk)*rho_vy(i,j)*Vcell(i,j)+&
-     &              rkpa(nrk)*step(i,j)*F_rho_vy(i,j)
+       rho_vy(i,j)=(1.-rkpa(nrk))*Rho_vy_m1(i,j)+rkpa(nrk)*rho_vy(i,j)+&
+     &              rkpa(nrk)*F_rho_vy(i,j)*temp
      
       end do
       end do
@@ -866,12 +868,6 @@
       do  i=ib,im-1
       
 !
-      volinv=1./Vcell(i,j)
-      rho(i,j)=rho(i,j)*volinv
-      rho_Et(i,j)=rho_Et(i,j)*volinv
-      rho_vx(i,j)=rho_vx(i,j)*volinv
-      rho_vy(i,j)=rho_vy(i,j)*volinv
-      
       RhoInv=1./rho(i,j)
       
       vx(i,j)=rho_vx(i,j)*RhoInv

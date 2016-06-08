@@ -147,7 +147,7 @@
 !       save last step solution
       Rho_m2(i,j)=Rho_m1(i,j)
       Rho_vx_m2(i,j)=rho_vx_m1(i,j)
-      Rho_vy_m2(i,j)=rho_vy_m(i,j)
+      Rho_vy_m2(i,j)=rho_vy_m1(i,j)
       Rho_Et_m2(i,j)=rho_Et_m1(i,j)
 !       save current step solution      
       Rho_m1(i,j)=rho(i,j)
