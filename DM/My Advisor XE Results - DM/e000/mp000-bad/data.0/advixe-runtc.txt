@@ -1,0 +1,11 @@
+
+=== Start: [2016/06/11 16:47:32] === 
+Analysis started...
+Result file: D:\CFD_DM\DM\DM\My Advisor XE Results - DM\e000\mp000\mp000.advixe 
+Error: An internal error has occurred. Our apologies for this inconvenience. Please gather a description of the steps leading up to the problem and contact the Intel customer support team.
+Error: This operating system is not supported. Suggestion: Check the Release Notes for a list of supported operating systems. 
+Error: An internal error has occurred. Our apologies for this inconvenience. Please gather a description of the steps leading up to the problem and contact the Intel customer support team.
+Application exit code: -1 
+Result file: D:\CFD_DM\DM\DM\My Advisor XE Results - DM\e000\mp000\mp000.advixe 
+Analysis terminated
+=== End: [2016/06/11 16:47:35] === 

@@ -1,0 +1,9 @@
+-r
+D:\CFD_DM\DM\DM\My Advisor XE Results - DM\e000\mp000
+--tool=map
+--search-dir
+sym=D:\CFD_DM\DM
+--search-dir
+bin=D:\CFD_DM\DM\DM
+--
+D:\CFD_DM\DM\DM\x64\Debug\DM.exe

@@ -46,6 +46,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<File RelativePath=".\AUSMPWplus_g.f90"/>
 		<File RelativePath="..\Sources\boundarycondition.f90"/>
 		<File RelativePath="..\Sources\Euler.f90"/>
 		<File RelativePath="..\Sources\flowfield.f90"/>
