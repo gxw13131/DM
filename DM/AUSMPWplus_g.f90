@@ -2,181 +2,66 @@ subroutine inviscid_fluxes_AUSMPWplus
 !     =========================
       
       use main
+ 
+      real*8 :: uL,uR,vL,vR,pL,pR,rhoL,rhoR
+      real*8 :: SNx,SNy
+      real*8 :: dRho,dRhoVx,dRhoVy,dRhoEt
+ 
       
-      real*8 :: Aco2,Aco,Arx,Ary,Vibc,Sii,Armx,Velpro,Acoa,Eox1,Vjbc,Sjj,Army,Eoy1,Ste
-      real*8 :: ttg, Alsinv,epsm
-      real*8 :: DR,DL,UL,UR,VL,VR,PL,PR,RL,RR,VamL,VamR,HL,HR,AcL,AcR
-      real*8 :: RRoRL,RRoRLp1
-      real*8 :: Rm,Um,Vm,Hm,Vm2,Am2,Am
-      real*8 :: sav1,sav2,sav,sav1N,sav2N
-      real*8 :: DUnormal,Drou,Dp,DRU,DRV,DRE
-      real*8 :: sos,sosI,qn,qn0
-       
-      real*8 :: DU,DV
-      real*8 :: aqn,amn,am0,aam0,omam0,sosIP,sosp,coef,Dpc1,Dpc2,Dqnc1,Dqnc2
-      real*8 :: Adr,AdrU,AdrE,ULnormal,Urnormal,RULnormal,RURnormal
-      real*8 :: Droi,Dxi,Drei,Droj,Dxj,Dyj,Drej
-      real*8 :: EL,ER
-      real*8 :: Adrv,Dyi
-      
-      epsm=0.1
-      
+ !=======================================
+      ! reset the flux to zero     
       do i=ib-1,im+1
-!
       do j=jb-1,jm+1
       
       F_rho(i,j)=0.
       F_rho_Et(i,j)=0.
       F_rho_vx(i,j)=0.
-      F_rho_vy(i,j)=0.
-      
-      
-      
+      F_rho_vy(i,j)=0.     
       end do
       end do
-      
-          
+     
 ! evaluate the inviscid fluxes   
 !
 ! -   i direction
 !
 !
       do j=jb,jm-1
-!
       do i=ib,im
-      
-      
-      
-      
-!    
+        
 !     left&right states
-!
-      
-      
-      ul=uil(i,j)
-      ur=uir(i,j) 
      
-      vl=vil(i,j)
-      vr=vir(i,j)
+      uL=uil(i,j)
+      uR=uir(i,j) 
      
+      vL=vil(i,j)
+      vR=vir(i,j)
      
-      pl=max(pil(i,j),EPSILON)
-      pr=max(pir(i,j),EPSILON)
+      pL=max(pil(i,j),EPSILON)
+      pR=max(pir(i,j),EPSILON)
      
-      rl=max(ril(i,j),EPSILON)
-      rr=max(rir(i,j),EPSILON)
-           
-      vaml=ul*ul+vl*vl
-      vamr=ur*ur+vr*vr
-      hl=pl*Gamma/(rl*Gamma1)+0.5*vaml
-      hr=pr*Gamma/(rr*Gamma1)+0.5*vamr 
-      acl=sqrt(Gamma*pl/rl)
-      acr=sqrt(Gamma*pr/rr)
-!
-!     Roe average
-!
+      rhoL=max(ril(i,j),EPSILON)
+      rhoR=max(rir(i,j),EPSILON)
       
-      rrorl=sqrt(rr/rl)
-      rrorlp1=1.+rrorl
-      
-      rm=sqrt(rr*rl)
-      um=(ul+ur*rrorl)/rrorlp1
-      vm=(vl+vr*rrorl)/rrorlp1
-     
-      hm=(hl+hr*rrorl)/rrorlp1
-      vm2=um*um+vm*vm
-      am2=Gamma1*abs(hm-0.5*vm2)
-      am=sqrt(am2)
-      
-                  
-! 
-!     
 !     surface area vectors
 !
-      sav1=Sn_X_i(i,j)
-      sav2=Sn_Y_i(i,j)
-      
-      sav=S_i(i,j)+EPSILON
-      sav1n=sav1/sav
-      sav2n=sav2/sav
-      
-!
-!     engenvalues
-!      
-         
-           du=(ur-ul)
-           dv=(vr-vl)
-           
-           dunormal=(sav1n*du+sav2n*dv)
-           drou=rr-rl
-           dp=pr-pl
-           dru=rm*du+um*drou
-           drv=rm*dv+vm*drou
+      SNx=Sn_X_i(i,j)
+      SNy=Sn_Y_i(i,j)
+             
           
-           dre=dp/Gamma1+0.5*vm2*drou+rm*um*du+rm*vm*dv
-           
-           sos=am
-           sosi=1./sos
-      
-           qn0=sav1n*um+sav2n*vm
-           qn=qn0+vib(i,j)/sav
-           aqn=abs(qn)
-           amn=qn*sosi
-           am0=min(abs(amn),1.)*sign(1.,amn)
-           if(abs(amn-1.)<epsm) am0=(-(1.-epsm)**2+2.*(1.+epsm)*amn-amn*amn)/(4.*epsm)
-           if(abs(amn+1.)<epsm) am0=((1.-epsm)**2+2.*(1.+epsm)*amn+amn*amn)/(4.*epsm)
-           aam0=abs(am0)
-          ! if(aam0<epsm) aam0=(epsm*epsm+aam0*aam0)/(2.*epsm)
-          ! if(aqn<epsm*sos) aqn=(epsm*epsm*sos*sos+aqn*aqn)/(2.*epsm*sos)
-           omam0=1.-aam0
-           
-           sosip=sosi
-           sosp=sos 
-           
-           
-!
-!     inviscid flux
-!      
-      coef=S_i(i,j)
-      dpc1=sosip*omam0*dp
-      dpc2=am0*dp
-      dqnc1=rm*am0*dunormal
-      dqnc2=rm*sosp*omam0*dunormal
-      
-      
-      adr =coef*(              dpc1              +dqnc1+aqn*drou)
-      adru=coef*(sav1n*dpc2+um*dpc1+sav1n*dqnc2+um*dqnc1+aqn*dru)
-      adrv=coef*(sav2n*dpc2+vm*dpc1+sav2n*dqnc2+vm*dqnc1+aqn*drv)  
-      adre=coef*(  qn0*dpc2+hm*dpc1+  qn0*dqnc2+hm*dqnc1+aqn*dre)  
-       
-      
-      ulnormal=(sav1*ul+sav2*vl+vib(i,j))
-      urnormal=(sav1*ur+sav2*vr+vib(i,j))
-      rulnormal=rl*ulnormal
-      rurnormal=rr*urnormal
-      
-!
 !     flux terms
-!
-      droi=-0.5*(rulnormal+rurnormal-adr)
-      dxi=-0.5*(rulnormal*ul+rurnormal*ur&
-     &            +sav1*(pl+pr)-adru) 
-      dyi=-0.5*(rulnormal*vl+rurnormal*vr&
-     &            +sav2*(pl+pr)-adrv)  
-      drei=-0.5*(rulnormal*hl+rurnormal*hr&
-     &            -vib(i,j)*(pl+pr)-adre)    
     
-      
+      call AUSMPWplus(uL,vL,pL,rhoL,uR,vR,pR,rhoR,SNx,SNy,&
+                        &dRho,dRhoVx,dRhoVy,dRhoEt)
      
-      F_rho(i,j)=F_rho(i,j)-droi
-      F_rho_Et(i,j)=F_rho_Et(i,j)-drei
-      F_rho_vx(i,j)=F_rho_vx(i,j)-dxi
-      F_rho_vy(i,j)=F_rho_vy(i,j)-dyi
+      F_rho(i,j)=F_rho(i,j)-dRho
+      F_rho_Et(i,j)=F_rho_Et(i,j)-dRhoEt
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dRhoVx
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dRhoVy
      
-      F_rho(i-1,j)=F_rho(i-1,j)+droi
-      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+drei
-      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dxi
-      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dyi
+      F_rho(i-1,j)=F_rho(i-1,j)+dRho
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+dRhoEt
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dRhoVx
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dRhoVy
       
       
       
@@ -194,132 +79,148 @@ subroutine inviscid_fluxes_AUSMPWplus
       
 !     left&right states
 ! 
-      ul=ujl(i,j)
-      ur=ujr(i,j) 
+      uL=ujl(i,j)
+      uR=ujr(i,j) 
      
-      vl=vjl(i,j)
-      vr=vjr(i,j)
+      vL=vjl(i,j)
+      vR=vjr(i,j)
      
+      pL=max(pjl(i,j),EPSILON)
+      pR=max(pjr(i,j),EPSILON)
      
-      pl=max(pjl(i,j),EPSILON)
-      pr=max(pjr(i,j),EPSILON)
-     
-      rl=max(rjl(i,j),EPSILON)
-      rr=max(rjr(i,j),EPSILON)
+      rhoL=max(rjl(i,j),EPSILON)
+      rhoR=max(rjr(i,j),EPSILON)
           
-      vaml=ul*ul+vl*vl
-      vamr=ur*ur+vr*vr
-      hl=pl*Gamma/(rl*Gamma1)+0.5*vaml
-      hr=pr*Gamma/(rr*Gamma1)+0.5*vamr 
-      acl=sqrt(Gamma*pl/rl)
-      acr=sqrt(Gamma*pr/rr)
-!
-!     Roe average
-!
+
+      !     surface area vectors
+      SNx=Sn_X_j(i,j)
+      SNy=Sn_Y_j(i,j)
       
-      rrorl=sqrt(rr/rl)
-      rrorlp1=1.+rrorl
+      call AUSMPWplus(uL,vL,pL,rhoL,uR,vR,pR,rhoR,SNx,SNy,&
+                        &dRho,dRhoVx,dRhoVy,dRhoEt)
       
-      rm=sqrt(rr*rl)
-      um=(ul+ur*rrorl)/rrorlp1
-      vm=(vl+vr*rrorl)/rrorlp1
-      hm=(hl+hr*rrorl)/rrorlp1
-      vm2=um*um+vm*vm
-      am2=Gamma1*abs(hm-0.5*vm2)
-      am=sqrt(am2)
+      F_rho(i,j)=F_rho(i,j)-dRho
+      F_rho_Et(i,j)=F_rho_Et(i,j)-dRhoEt
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dRhoVx
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dRhoVy
       
-                  
-! 
-!     
-!     surface area vectors
-!
-      sav1=Sn_X_j(i,j)
-      sav2=Sn_Y_j(i,j)
-      sav=S_j(i,j)+EPSILON
-      sav1n=sav1/sav
-      sav2n=sav2/sav
-          
-!
-!     engenvalues
-!      
-           du=(ur-ul)
-           dv=(vr-vl)
-           dunormal=(sav1n*du+sav2n*dv)
-           drou=rr-rl
-           dp=pr-pl
-           dru=rm*du+um*drou
-           drv=rm*dv+vm*drou
-           dre=dp/Gamma1+0.5*vm2*drou+rm*um*du+rm*vm*dv 
-           
-           sos=am
-           sosi=1./sos
-       
-           qn0=sav1n*um+sav2n*vm
-           qn=qn0+vjb(i,j)/sav
-           aqn=abs(qn)
-           amn=qn*sosi
-           am0=min(abs(amn),1.)*sign(1.,amn)
-           if(abs(amn-1.)<epsm) am0=(-(1.-epsm)**2+2.*(1.+epsm)*amn-amn*amn)/(4.*epsm)
-           if(abs(amn+1.)<epsm) am0=((1.-epsm)**2+2.*(1.+epsm)*amn+amn*amn)/(4.*epsm)
-           aam0=abs(am0)
-           if(aam0<epsm) aam0=(epsm*epsm+aam0*aam0)/(2.*epsm)
-           if(aqn<epsm*sos) aqn=(epsm*epsm*sos*sos+aqn*aqn)/(2.*epsm*sos)
-           omam0=1.-aam0
-           
-           sosip=sosi
-           sosp=sos 
-           
-          
-           
-           
-           
-           
-!
-!     inviscid flux
-!      
-      coef=S_j(i,j)
-      dpc1=sosip*omam0*dp
-      dpc2=am0*dp
-      dqnc1=rm*am0*dunormal
-      dqnc2=rm*sosp*omam0*dunormal
-      
-      adr =coef*(              dpc1              +dqnc1+aqn*drou)
-      adru=coef*(sav1n*dpc2+um*dpc1+sav1n*dqnc2+um*dqnc1+aqn*dru)
-      adrv=coef*(sav2n*dpc2+vm*dpc1+sav2n*dqnc2+vm*dqnc1+aqn*drv)  
-      adre=coef*(  qn0*dpc2+hm*dpc1+  qn0*dqnc2+hm*dqnc1+aqn*dre)    
-      
-      ulnormal=(sav1*ul+sav2*vl+vjb(i,j))
-      urnormal=(sav1*ur+sav2*vr+vjb(i,j))
-      rulnormal=rl*ulnormal
-      rurnormal=rr*urnormal
-      
-!
-!     flux terms
-!
-      droj=-0.5*(rulnormal+rurnormal-adr)
-      dxj=-0.5*(rulnormal*ul+rurnormal*ur&
-     &            +sav1*(pl+pr)-adru) 
-      dyj=-0.5*(rulnormal*vl+rurnormal*vr&
-     &            +sav2*(pl+pr)-adrv) 
-      drej=-0.5*(rulnormal*hl+rurnormal*hr&
-     &            -vjb(i,j)*(pl+pr)-adre)
-           
-      
-      F_rho(i,j)=F_rho(i,j)-droj
-      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
-      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
-      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
-      
-      F_rho(i,j-1)=F_rho(i,j-1)+droj
-      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
-      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
-      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
+      F_rho(i,j-1)=F_rho(i,j-1)+dRho
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+dRhoEt
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dRhoVx
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dRhoVy
       
       
       
       end do
       end do     
 !  
-      return
+
+contains 
+    subroutine AUSMPWplus(uL,vL,pL,rhoL,uR,vR,pR,rhoR,SNx,SNy,&
+    &dRho,dRhoVx,dRhoVy,dRhoEt)
+        implicit none
+        real*8 :: EPSILON=1E-10
+        real*8 :: alpha=3.0/16.0
+        real*8 :: uL,vL,pL,rhoL,uR,vR,pR,rhoR
+        real*8 :: SNx,SNy,SNxN,SNyN
+
+        real*8 :: Vm2L,Vm2R,HL,HR,VnL,VnR
+        real*8 :: Gm,Gm1,Gm2
+        
+        !intermediate variables
+        real*8 :: aStarL,aStarR,aTildeL,aTildeR,aS
+        real*8 :: MpL,MnR,PpL,pnR,MpL_,MnR_
+        real*8 :: fL,fR
+        real*8 :: ps,mHalf,wp
+        
+        Gm=Gamma
+        Gm1=Gm/(Gm-1.0)
+        Gm2=2.0*(Gm-1.0)/(Gm+1.0)
+        ! magnitude^2 of velocity
+        Vm2L=uL**2+vL**2 
+        Vm2R=uR**2+vR**2
+        ! enthalpy
+        HL=Gm1*pL/rhoL+0.5*Vm2L
+        HR=Gm1*pR/rhoR+0.5*Vm2R
+        !sound speed
+        aL=sqrt(Gm*pL/rhoL)
+        aR=sqrt(Gm*pR/rhoR)
+        ! normalized SD
+        SNxN=SNx/sqrt(SNx**2+SNy**2)
+        SNyN=SNy/sqrt(SNx**2+SNy**2)
+        ! normal speed on interface
+        VnL=(uL*SNxN+vL*SNyN)
+        VnR=(uR*SNxN+vR*SNyN)
+        ! critical sound speed
+        aStarL=sqrt(Gm2*HL)
+        aStarR=sqrt(Gm2*HR)
+        ! numerical sound speed
+        !aTildeL=aStarL**2/max(sqrt(Vm2L),aStarL)
+        !aTildeR=aStarR**2/max(sqrt(Vm2R),aStarR)
+        
+        aTildeL=aStarL**2/max(abs(VnL),aStarL)
+        aTildeR=aStarR**2/max(abs(VnR),aStarR)
+        
+        ! sound speed on the interface 
+        aS=min(aTildeL,aTildeR)
+        
+        ! Mach number
+        MaL=VnL/aS
+        maR=VnR/aS
+        
+        !split function
+        if(abs(MaL)>1.0)then
+        MpL=0.5*(MaL+abs(MaL))
+        !PpL=0.5*(1.0+sign(M))
+        PpL=0.5*(MaL+abs(MaL))/(MaL+EPSILON)
+        
+        else
+        MpL=0.25*(MaL+1.0)**2
+        PpL=0.25*(MaL+1.0)**2*(2.0-MaL)+alpha*(MaL**2-1.0)**2
+        
+        endif
+        
+        if(abs(MaR)>1.0)then
+        MnR=0.5*(MaR-abs(MaR))
+        !PpL=0.5*(1.0+sign(M))
+        PnR=0.5*(MaR-abs(MaR))/(MaR+EPSILON)
+        else
+        MnR=-0.25*(MaR-1.0)**2
+        PnR=0.25*(MaR-1.0)**2*(2.0+MaR)-alpha*(MaR**2-1.0)**2
+        endif
+        
+        pS=PpL*pL+pnR*pR
+        mHalf=MpL+MnR
+        
+        wp=1.0-min(pL/pR,pR/pL)**3
+        
+        if(abs(MaL)<1.0)then
+        fL=pL/(pS+EPSILON)-1.0
+        else 
+        fL=0.0
+        endif
+
+        if(abs(MaR)<1.0)then
+        fR=pR/(pS+EPSILON)-1.0
+        else
+        fR=0.0
+        endif
+        
+        if(mHalf>=0)then
+        MpL_=MpL+MnR*((1.0-wp)*(1.0+fR)-fL)
+        MnR_=MnR*wp*(1.0+fR)
+        else
+        MpL_=MnR*wp*(1.0+fL)
+        MnR_=MnR+MpL*((1.0-wp)*(1.0+fL)-fR)
+        endif
+        
+        dRho=MpL_*aS*rhoL+MnR_*aS*rhoR
+        dRhoVx=MpL_*aS*rhoL*uL+MnR_*aS*rhoR*uR+(PpL*pL+PnR*pR)*SNxN
+        dRhoVy=MpL_*aS*rhoL*vL+MnR_*aS*rhoR*vR+(PpL*pL+PnR*pR)*SNyN
+        dRhoEt=MpL_*aS*rhoL*HL+MnR_*aS*rhoR*HR
+
+    end
+
+      
       end 
-     
+ 
