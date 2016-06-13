@@ -1,4 +1,3 @@
-
 !====================================================================================
       subroutine radius
       
@@ -37,9 +36,7 @@
       end do
       end do
       
-      end subroutine
-
-      
+      end subroutine     
       
       subroutine time_step
       !===================
@@ -562,24 +559,24 @@
 !
 !     flux terms
 !
-      droj=-0.5*(rulnormal+rurnormal-adr)
-      dxj=-0.5*(rulnormal*ul+rurnormal*ur&
+      droj=0.5*(rulnormal+rurnormal-adr)
+      dxj=0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-adru) 
-      dyj=-0.5*(rulnormal*vl+rurnormal*vr&
+      dyj=0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-adrv) 
-      drej=-0.5*(rulnormal*hl+rurnormal*hr&
+      drej=0.5*(rulnormal*hl+rurnormal*hr&
      &            -vjb(i,j)*(pl+pr)-adre)
            
       
-      F_rho(i,j)=F_rho(i,j)-droj
-      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
-      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
-      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
+      F_rho(i,j)=F_rho(i,j)+droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)+drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)+dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)+dyj
       
-      F_rho(i,j-1)=F_rho(i,j-1)+droj
-      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
-      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
-      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
+      F_rho(i,j-1)=F_rho(i,j-1)-droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)-drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)-dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)-dyj
       
       
       
@@ -638,11 +635,7 @@
 !
       do j=jb,jm-1
 !
-      do i=ib,im
-      
-      
-      
-      
+      do i=ib,im    
 !    
 !     left&right states
 !
@@ -698,25 +691,25 @@
 !
 !     flux terms
 !
-      droi=-0.5*(rulnormal+rurnormal-coex*(rr-rl))
-       dxi=-0.5*(rulnormal*ul+rurnormal*ur&
+      droi=0.5*(rulnormal+rurnormal-coex*(rr-rl))
+       dxi=0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-coex*(rr*ur-rl*ul)) 
-       dyi=-0.5*(rulnormal*vl+rurnormal*vr&
+       dyi=0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-coex*(rr*vr-rl*vl))  
-      drei=-0.5*(rulnormal*hl+rurnormal*hr&
+      drei=0.5*(rulnormal*hl+rurnormal*hr&
      &            -vib(i,j)*(pl+pr)-coex*(rr*er-rl*el))    
     
       
      
-      F_rho(i,j)=F_rho(i,j)-droi
-      F_rho_Et(i,j)=F_rho_Et(i,j)-drei
-      F_rho_vx(i,j)=F_rho_vx(i,j)-dxi
-      F_rho_vy(i,j)=F_rho_vy(i,j)-dyi
+      F_rho(i,j)=F_rho(i,j)+droi
+      F_rho_Et(i,j)=F_rho_Et(i,j)+drei
+      F_rho_vx(i,j)=F_rho_vx(i,j)+dxi
+      F_rho_vy(i,j)=F_rho_vy(i,j)+dyi
      
-      F_rho(i-1,j)=F_rho(i-1,j)+droi
-      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+drei
-      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dxi
-      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dyi
+      F_rho(i-1,j)=F_rho(i-1,j)-droi
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)-drei
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)-dxi
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)-dyi
       
       
       
@@ -783,24 +776,24 @@
 !
 !     flux terms
 !
-      droj=-0.5*(rulnormal+rurnormal-coey*(rr-rl))
-       dxj=-0.5*(rulnormal*ul+rurnormal*ur&
+      droj=0.5*(rulnormal+rurnormal-coey*(rr-rl))
+       dxj=0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-coey*(rr*ur-rl*ul)) 
-       dyj=-0.5*(rulnormal*vl+rurnormal*vr&
+       dyj=0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-coey*(rr*vr-rl*vl))  
-      drej=-0.5*(rulnormal*hl+rurnormal*hr&
+      drej=0.5*(rulnormal*hl+rurnormal*hr&
      &            -vjb(i,j)*(pl+pr)-coey*(rr*er-rl*el)) 
            
       
-      F_rho(i,j)=F_rho(i,j)-droj
-      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
-      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
-      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
+      F_rho(i,j)=F_rho(i,j)+droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)+drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)+dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)+dyj
       
-      F_rho(i,j-1)=F_rho(i,j-1)+droj
-      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
-      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
-      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
+      F_rho(i,j-1)=F_rho(i,j-1)-droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)-drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)-dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)-dyj
       
       
       

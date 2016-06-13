@@ -12,8 +12,6 @@
      use main
 
      integer :: IS_END
-     real*8 :: Tinv
-     real*8 :: r1,r2,r3,r4,RSM1,RSM2,RSM3,RSM4
      real*8 :: TIME1,TIME2
 !
       open (2,file='Euler.his',status='unknown')
@@ -31,6 +29,7 @@
 !     start of main iteration loop
 !     ----------------------------
 !
+      !pSolver=>Runge_Kutta(nrk)
       
       is_End=0
 !     if is_End==1, the computation stops
@@ -40,9 +39,12 @@
 !
 !     start a new time step
 !     ---------------------
- 
-
- 100  is_print=0
+!=====================================================================
+! begin the main loop
+!====================================================================
+      
+      do while(is_End.ne.1)
+100   is_print=0
 !     if is_print==1 output the results
 
       n=n+1
@@ -70,7 +72,7 @@
 !     solve Euler equations
 !     ------------------
 !
-      !call solver(1)
+      call solver(1)
       call solver(2)
 !     subroutine solver: solve the ns equation for one Runge-Kutta stage      
       
@@ -78,15 +80,68 @@
 !
 !
       if(.not.steady1) ttime=ttime+step(ib,jb)
+!        
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! save solution
+      !     store variables of previous time steps
+      !     ---------------------------------------
+      ! print the rms of equations
+      call rms
+      
+      call saveStep
+      
+      call output
+      if(.not.steady1) call outputuns
+            
+      end do !
+!=========================================================
+!     end of main loop
+!========================================================
+      close (2)
+      write(*,*) 'Normal Termination' 
+      write(*,*) time2-time1
+      
+      
+      end program
 !
-!     store variables of previous time steps
-!     ---------------------------------------
+!=================================================
+      subroutine saveStep()
+      use main
+      implicit none
+        do i=ib,im
+        do j=jb,jm 
+!       save last step solution
+            Rho_m2(i,j)=Rho_m1(i,j)
+            Rho_vx_m2(i,j)=rho_vx_m1(i,j)
+            Rho_vy_m2(i,j)=rho_vy_m1(i,j)
+            Rho_Et_m2(i,j)=rho_Et_m1(i,j)
+!       save current step solution      
+            Rho_m1(i,j)=rho(i,j)
+            Rho_vx_m1(i,j)=rho_vx(i,j)
+            Rho_vy_m1(i,j)=rho_vy(i,j)
+            Rho_Et_m1(i,j)=rho_Et(i,j)
 !
+      end do
+      end do
+            
+      end subroutine
 
-      rms1=0.
-      rms2=0.
-      rms3=0.
-      rms4=0.
+      
+      
+      subroutine rms
+      use main
+      implicit none
+      REAL*8 ::  rms1,rms2,rms3,rms4
+      REAL*8 ::  r1,r2,r3,r4
+     integer :: imax1,jmax1, &
+     &            imax2,jmax2, &
+     &            imax3,jmax3, &
+     &            imax4,jmax4
+      real*8 :: Tinv
+       rms1=0.
+       rms2=0.
+       rms3=0.
+       rms4=0.
       
       
       do i=ib,im-1
@@ -100,25 +155,25 @@
       r4=abs(rho_Et(i,j)-Rho_Et_m1(i,j))*tinv
       
       if(r1>rms1) then
-        rsm1=r1
+        rms1=r1
         imax1=i
         jmax1=j
       end if 
       
       if(r2>rms2) then
-        rsm2=r2
+        rms2=r2
         imax2=i
         jmax2=j
       end if 
       
       if(r3>rms3) then
-        rsm3=r3
+        rms3=r3
         imax3=i
         jmax3=j
       end if
       
       if(r4>rms4) then
-        rsm4=r4
+        rms4=r4
         imax4=i
         jmax4=j
       end if  
@@ -128,51 +183,15 @@
       
       if(mod(n,10).eq.0) then
           write(*,*) 'time', ttime*L_ref/V_ref
-          write(*,*) rsm1,imax1,jmax1
-          write(*,*) rsm2,imax2,jmax2
-          write(*,*) rsm3,imax3,jmax3
-          write(*,*) rsm4,imax4,jmax4
+          write(*,*) rms1,imax1,jmax1
+          write(*,*) rms2,imax2,jmax2
+          write(*,*) rms3,imax3,jmax3
+          write(*,*) rms4,imax4,jmax4
         
-          write(2,*) rsm1,imax1,jmax1
-          write(2,*) rsm2,imax2,jmax2
-          write(2,*) rsm3,imax3,jmax3
-          write(2,*) rsm4,imax4,jmax4
-      end if
-
-      
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      ! save solution
-      do i=ib,im
-      do j=jb,jm 
-!       save last step solution
-      Rho_m2(i,j)=Rho_m1(i,j)
-      Rho_vx_m2(i,j)=rho_vx_m1(i,j)
-      Rho_vy_m2(i,j)=rho_vy_m1(i,j)
-      Rho_Et_m2(i,j)=rho_Et_m1(i,j)
-!       save current step solution      
-      Rho_m1(i,j)=rho(i,j)
-      Rho_vx_m1(i,j)=rho_vx(i,j)
-      Rho_vy_m1(i,j)=rho_vy(i,j)
-      Rho_Et_m1(i,j)=rho_Et(i,j)
-!
-      end do
-      end do
-
-      call output
-      if(.not.steady1) call outputuns
-      
-!     ==============
-!
-      if(is_End.eq.1) then
-      close (2)
-      write(*,*) 'Normal Termination'
-  
-      write(*,*) time2-time1
-      stop
-      endif
-      goto 100
-      end
-!
-!     end of main loop
-!     ----------------
-!
+          write(2,*) rms1,imax1,jmax1
+          write(2,*) rms2,imax2,jmax2
+          write(2,*) rms3,imax3,jmax3
+          write(2,*) rms4,imax4,jmax4
+          endif
+        end subroutine
+          

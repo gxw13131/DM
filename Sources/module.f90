@@ -6,8 +6,20 @@
       parameter(iq=405,jq=105,ngmax=max(iq,jq)+5)
       parameter(EPSILON=1.0d-20,EPSILON1=1.0d-10,INFINITY=1.0d20)
       parameter(pi=3.1415926535897932384626)
-     ! parameter(one=1.0,zero=0.0)  
+     
       
+      interface
+        subroutine LUSGS
+        end subroutine LUSGS
+        
+        subroutine Runge_Kutta(nrk)
+            integer :: nrk
+        end subroutine Runge_Kutta
+     
+      end interface
+      
+     
+     procedure(LUSGS),pointer:: pSolver=>NULL()
       
       logical :: steady1
       
@@ -106,13 +118,7 @@
 	  !REAL*8 :: &
    ! & Vx_Inlet,Vy_Inlet,T_Inlet,p_Inlet,p_Out
     
-     REAL*8 :: &
-     &  rms1,rms2,rms3,rms4
      
-     integer :: imax1,jmax1, &
-    &            imax2,jmax2, &
-	  &            imax3,jmax3, &
-    &            imax4,jmax4
 
     !================ definations of some DIFF functions =============
     !       diff on the &&  LEFT/SOUTH  && interface

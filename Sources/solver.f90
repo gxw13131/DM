@@ -33,11 +33,14 @@
 !     ===========================
 
 !     evaluate the inviscid fluxes 
-      if(irsolver==0) then
-      call inviscid_fluxes_roe
-      else
-      call inviscid_fluxes_lax
-      end if
+      select case (irsolver)
+      case (1)
+        call inviscid_fluxes_lax
+      case (2)
+        call inviscid_fluxes_AUSMPWplus
+      case default
+        call inviscid_fluxes_roe
+      end select
       
 !       compute the viscous flux
       call viscous_Flux
@@ -47,6 +50,7 @@
 !     Runge-Kutta time stepping
  !     call Runge_Kutta(nrk)
       call LUSGS
+   !   call pSolver
 !     =====================                
 !      CALL CPU_TIME ( time13 )
       
