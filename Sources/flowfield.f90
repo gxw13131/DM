@@ -152,11 +152,7 @@
       real*8 :: sos,sos1,QNo,QN
       
       ! MUSCL interpolation at cell interface except boundaries
-      
-      alimiter(var1,var2)=(var1*(var2*var2+2.*epsm*epsm)+&
-     &                     var2*(2.*var1*var1+epsm*epsm))/&
-     &            (2.*var1*var1-var1*var2+2.*var2*var2+3.*epsm*epsm) &
-     &            *0.5*abs(sign(1.0,var1)+sign(1.0,var2)) 
+     
      
    !   alimiter(var1,var2)=2./3.*var1+1./3.*var2
       epsm=EPSILON
@@ -256,7 +252,18 @@
       end do
       end do
      
-      return
+contains
+
+      function  alimiter(var1,var2)
+      real*8 :: var1,var2
+      real*8 :: alimiter
+       alimiter=(var1*(var2*var2+2.*epsm*epsm)+&
+     &                     var2*(2.*var1*var1+epsm*epsm))/&
+     &            (2.*var1*var1-var1*var2+2.*var2*var2+3.*epsm*epsm) &
+     &            *0.5*abs(sign(1.0,var1)+sign(1.0,var2)) 
+     
+      end function alimiter
+      
       end
       
 !====================================================================================     
@@ -804,7 +811,7 @@
       end
 
 !==============================================================================
-      subroutine Runge_Kutta(nrk)
+      subroutine RK2
       !=========================
       
       ! compute the right hand side of the Navier-Stokes equations
@@ -812,6 +819,8 @@
       use main
       
       integer :: nrk
+      save nrk
+      data nrk /1/
       REAL*8:: rkpa(2)
       real*8 :: temp
       rkpa(1)=1.
@@ -839,7 +848,7 @@
      
       end do
       end do
-
+      nrk=2-mod(nrk+1,2)
       
       return
       end

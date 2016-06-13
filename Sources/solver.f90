@@ -1,10 +1,9 @@
 !=====================================================================================      
-      subroutine solver(nrk)
+      subroutine solver
 !     *****************
 !
       use main
       real*8 :: time1,time2
-      integer :: nrk
 !*****************************************************************************
       CALL CPU_TIME ( time1 )
 !     compute the area-vectors and interpolation coordinates  
@@ -48,9 +47,9 @@
 !      CALL CPU_TIME ( time12 )
 !*****************************************************************************
 !     Runge-Kutta time stepping
- !     call Runge_Kutta(nrk)
-      call LUSGS
-   !   call pSolver
+   !   call Runge_Kutta
+  !    call LUSGS
+      call pSolver
 !     =====================                
 !      CALL CPU_TIME ( time13 )
       

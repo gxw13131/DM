@@ -115,7 +115,7 @@
       subroutine bc_muscl_interpolation
       !================================
       use main
-      
+      real*8 :: xHalf
       ! set muscl_interpolated value at the cell interfaces on the boundary
       
       

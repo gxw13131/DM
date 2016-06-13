@@ -12,9 +12,8 @@
         subroutine LUSGS
         end subroutine LUSGS
         
-        subroutine Runge_Kutta(nrk)
-            integer :: nrk
-        end subroutine Runge_Kutta
+        subroutine RK2
+        end subroutine RK2
      
       end interface
       

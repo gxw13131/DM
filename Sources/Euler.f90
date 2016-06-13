@@ -29,7 +29,7 @@
 !     start of main iteration loop
 !     ----------------------------
 !
-      !pSolver=>Runge_Kutta(nrk)
+      pSolver=>RK2
       
       is_End=0
 !     if is_End==1, the computation stops
@@ -72,8 +72,8 @@
 !     solve Euler equations
 !     ------------------
 !
-      call solver(1)
-      call solver(2)
+      call solver
+      call solver
 !     subroutine solver: solve the ns equation for one Runge-Kutta stage      
       
       !end do
@@ -183,15 +183,16 @@
       
       if(mod(n,10).eq.0) then
           write(*,*) 'time', ttime*L_ref/V_ref
-          write(*,*) rms1,imax1,jmax1
-          write(*,*) rms2,imax2,jmax2
-          write(*,*) rms3,imax3,jmax3
-          write(*,*) rms4,imax4,jmax4
+          write(*,233) rms1,imax1,jmax1
+          write(*,233) rms2,imax2,jmax2
+          write(*,233) rms3,imax3,jmax3
+          write(*,233) rms4,imax4,jmax4
         
           write(2,*) rms1,imax1,jmax1
           write(2,*) rms2,imax2,jmax2
           write(2,*) rms3,imax3,jmax3
           write(2,*) rms4,imax4,jmax4
           endif
+233     FORMAT(5X,"RMS=",1X,E10.3,1X,"at(",I3,I3,")")
         end subroutine
           
