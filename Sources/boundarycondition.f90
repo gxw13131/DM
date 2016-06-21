@@ -39,22 +39,23 @@
      
       do j=jb-1,jm
      
-  !    p (i,j)=max(2.*p(i-1,j)-p(i-2,j),1.0e-10) 
-  !    vx(i,j)=2.*vx(i-1,j)-vx(i-2,j)
-  !    vy(i,j)=2.*vy(i-1,j)-vy(i-2,j)
-  !    rho(i,j)=max(2.*rho(i-1,j)-rho(i-2,j),1.0e-10)
-  !  Mu_E(i,j)=2.*Mu_E(i-1,j)-Mu_E(i-2,j)
-  !  Mu_L(i,j)=2.*Mu_L(i-1,j)-Mu_L(i-2,j)
-  !L_Cell_x(i,j)=L_Cell_x(i-1,j)
-      p(i,j)=p(i-1,j)
-      T(i,j)=T(i-1,j)
-      vx(i,j)=vx(i-1,j)
-      vy(i,j)=vy(i-1,j)
-      rho(i,j)=rho(i-1,j)
-      Mu_L(i,j)=Mu_L(i-1,j)
-      Mu_E(i,j)=Mu_E(i-1,j)
+      p (i,j)=max(2.*p(i-1,j)-p(i-2,j),1.0e-10) 
       
-      L_Cell_x(i,j)=L_Cell_x(i-1,j)
+      vx(i,j)=2.*vx(i-1,j)-vx(i-2,j)
+      vy(i,j)=2.*vy(i-1,j)-vy(i-2,j)
+      rho(i,j)=max(2.*rho(i-1,j)-rho(i-2,j),1.0e-10)
+      Mu_E(i,j)=2.*Mu_E(i-1,j)-Mu_E(i-2,j)
+      Mu_L(i,j)=2.*Mu_L(i-1,j)-Mu_L(i-2,j)
+ ! L_Cell_x(i,j)=L_Cell_x(i-1,j)
+      !p(i,j)=p(i-1,j)
+      !T(i,j)=T(i-1,j)
+      !vx(i,j)=vx(i-1,j)
+      !vy(i,j)=vy(i-1,j)
+      !rho(i,j)=rho(i-1,j)
+      !Mu_L(i,j)=Mu_L(i-1,j)
+      !Mu_E(i,j)=Mu_E(i-1,j)
+      !
+      !L_Cell_x(i,j)=L_Cell_x(i-1,j)
      
       end do
       
@@ -97,13 +98,13 @@
       do i=ib,im-1
       
       
-      vx(i,j+1)=vx(i,j)
-      vy(i,j+1)=vy(i,j)
-      p(i,j+1)=p(i,j)
-      rho(i,j+1)=rho(i,j)
-      Mu_E(i,j+1)=Mu_E(i,j)
-      Mu_L(i,j+1)=Mu_L(i,j)
-      T(i,j+1)=T(i,j)
+      vx(i,j+1)=2.0*vx(i,j)-vx(i,j-1)
+      vy(i,j+1)=2.0*vy(i,j)-vy(i,j-1)
+      p(i,j+1)=2.0*p(i,j)-p(i,j-1)
+      rho(i,j+1)=2.0*rho(i,j)-rho(i,j-1)
+      Mu_E(i,j+1)=2.0*Mu_E(i,j)-Mu_E(i,j-1)
+      Mu_L(i,j+1)=2.0*Mu_L(i,j)-Mu_L(i,j-1)
+      T(i,j+1)=2.0*T(i,j)-T(i,j-1)
       
       end do
        

@@ -29,7 +29,7 @@
 !     start of main iteration loop
 !     ----------------------------
 !
-      pSolver=>RK2
+      pSolver=>LUSGS
       
       is_End=0
 !     if is_End==1, the computation stops
@@ -72,7 +72,9 @@
 !     solve Euler equations
 !     ------------------
 !
-      call solver
+      !call solver
+      !call solver
+      !call solver
       call solver
 !     subroutine solver: solve the ns equation for one Runge-Kutta stage      
       
@@ -193,6 +195,6 @@
           write(2,*) rms3,imax3,jmax3
           write(2,*) rms4,imax4,jmax4
           endif
-233     FORMAT(5X,"RMS=",1X,E10.3,1X,"at(",I3,I3,")")
+233     FORMAT(5X,"RMS=",1X,E10.3,1X,"at(",I3,",",I3,")")
         end subroutine
           

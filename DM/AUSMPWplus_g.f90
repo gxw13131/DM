@@ -55,15 +55,15 @@ subroutine inviscid_fluxes_AUSMPWplus
       !if(i==100.AND.j==3)then
       !write(*,*) "pause"
       !endif
-      F_rho(i,j)    =F_rho(i,j)     +dRho*S
-      F_rho_Et(i,j) =F_rho_Et(i,j)  +dRhoEt*S
-      F_rho_vx(i,j) =F_rho_vx(i,j)  +dRhoVx*S
-      F_rho_vy(i,j) =F_rho_vy(i,j)  +dRhoVy*S
+      F_rho(i,j)    =F_rho(i,j)     -dRho*S
+      F_rho_Et(i,j) =F_rho_Et(i,j)  -dRhoEt*S
+      F_rho_vx(i,j) =F_rho_vx(i,j)  -dRhoVx*S
+      F_rho_vy(i,j) =F_rho_vy(i,j)  -dRhoVy*S
      
-      F_rho(i-1,j)      =F_rho(i-1,j)   -dRho*S
-      F_rho_Et(i-1,j)   =F_rho_Et(i-1,j)-dRhoEt*S
-      F_rho_vx(i-1,j)   =F_rho_vx(i-1,j)-dRhoVx*S
-      F_rho_vy(i-1,j)   =F_rho_vy(i-1,j)-dRhoVy*S
+      F_rho(i-1,j)      =F_rho(i-1,j)   +dRho*S
+      F_rho_Et(i-1,j)   =F_rho_Et(i-1,j)+dRhoEt*S
+      F_rho_vx(i-1,j)   =F_rho_vx(i-1,j)+dRhoVx*S
+      F_rho_vy(i-1,j)   =F_rho_vy(i-1,j)+dRhoVy*S
           
       end do
       end do
@@ -101,15 +101,15 @@ subroutine inviscid_fluxes_AUSMPWplus
       !if(i==100.AND.j==4)then
       !write(*,*) "pause"
       !endif
-      F_rho(i,j)    =F_rho(i,j)     +dRho*S
-      F_rho_Et(i,j) =F_rho_Et(i,j)  +dRhoEt*S
-      F_rho_vx(i,j) =F_rho_vx(i,j)  +dRhoVx*S
-      F_rho_vy(i,j) =F_rho_vy(i,j)  +dRhoVy*S
+      F_rho(i,j)    =F_rho(i,j)     -dRho*S
+      F_rho_Et(i,j) =F_rho_Et(i,j)  -dRhoEt*S
+      F_rho_vx(i,j) =F_rho_vx(i,j)  -dRhoVx*S
+      F_rho_vy(i,j) =F_rho_vy(i,j)  -dRhoVy*S
       
-      F_rho(i,j-1)      =F_rho(i,j-1)   -dRho*S
-      F_rho_Et(i,j-1)   =F_rho_Et(i,j-1)-dRhoEt*S
-      F_rho_vx(i,j-1)   =F_rho_vx(i,j-1)-dRhoVx*S
-      F_rho_vy(i,j-1)   =F_rho_vy(i,j-1)-dRhoVy*S
+      F_rho(i,j-1)      =F_rho(i,j-1)   +dRho*S
+      F_rho_Et(i,j-1)   =F_rho_Et(i,j-1)+dRhoEt*S
+      F_rho_vx(i,j-1)   =F_rho_vx(i,j-1)+dRhoVx*S
+      F_rho_vy(i,j-1)   =F_rho_vy(i,j-1)+dRhoVy*S
       
       
       
@@ -215,10 +215,10 @@ contains
         MnR_=MnR+MpL*((1.0-wp)*(1.0+fL)-fR)
         endif
         
-        dRho  = MpL_*aS*rhoL_      +MnR_*aS*rhoR_
-        dRhoVx= MpL_*aS*rhoL_*uL_  +MnR_*aS*rhoR_*uR_  +(PpL*pL+PnR*pR)*SNxN
-        dRhoVy= MpL_*aS*rhoL_*vL_  +MnR_*aS*rhoR_*vR_  +(PpL*pL+PnR*pR)*SNyN
-        dRhoEt= MpL_*aS*rhoL_*HL   +MnR_*aS*rhoR_*HR
+        dRho  = -(MpL_*aS*rhoL_      +MnR_*aS*rhoR_)
+        dRhoVx= -(MpL_*aS*rhoL_*uL_  +MnR_*aS*rhoR_*uR_  +(PpL*pL+PnR*pR)*SNxN)
+        dRhoVy= -(MpL_*aS*rhoL_*vL_  +MnR_*aS*rhoR_*vR_  +(PpL*pL+PnR*pR)*SNyN)
+        dRhoEt= -(MpL_*aS*rhoL_*HL   +MnR_*aS*rhoR_*HR)
 
     end
 

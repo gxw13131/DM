@@ -21,7 +21,8 @@
           armx=sqrt(sii)
           velpro=vx(i,j)*arx+vy(i,j)*ary+vibc
           acoa=armx*aco
-          radius_i(i,j)=abs(velpro)+acoa!+2.0*sii*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)
+          radius_i(i,j)=abs(velpro)+acoa&
+          &+2.0*sii*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)/Vcell(i,j)
 
 !       j direction
           arx=0.5*(Sn_X_j(i,j)+Sn_X_j(i,j+1))
@@ -31,7 +32,8 @@
           army=sqrt(sjj)
           velpro=vx(i,j)*arx+vy(i,j)*ary+vjbc
           acoa=army*aco
-          radius_j(i,j)=abs(velpro)+acoa!+2.0*sjj*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)
+          radius_j(i,j)=abs(velpro)+acoa&
+          &+2.0*sjj*max(1.3333,Gamma/Pr_L)*Mu_E(i,j)/rho(i,j)/Vcell(i,j)
 !
       end do
       end do
@@ -253,9 +255,9 @@
       end do
      
 contains
-
       function  alimiter(var1,var2)
       real*8 :: var1,var2
+      
       real*8 :: alimiter
        alimiter=(var1*(var2*var2+2.*epsm*epsm)+&
      &                     var2*(2.*var1*var1+epsm*epsm))/&
@@ -266,7 +268,11 @@ contains
       
       end
       
-!====================================================================================     
+      
+      
+      
+      
+      !====================================================================================     
        
       subroutine inviscid_fluxes_roe
 !     =========================
@@ -566,24 +572,24 @@ contains
 !
 !     flux terms
 !
-      droj=0.5*(rulnormal+rurnormal-adr)
-      dxj=0.5*(rulnormal*ul+rurnormal*ur&
+      droj=-0.5*(rulnormal+rurnormal-adr)
+      dxj=-0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-adru) 
-      dyj=0.5*(rulnormal*vl+rurnormal*vr&
+      dyj=-0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-adrv) 
-      drej=0.5*(rulnormal*hl+rurnormal*hr&
+      drej=-0.5*(rulnormal*hl+rurnormal*hr&
      &            -vjb(i,j)*(pl+pr)-adre)
            
       
-      F_rho(i,j)=F_rho(i,j)+droj
-      F_rho_Et(i,j)=F_rho_Et(i,j)+drej
-      F_rho_vx(i,j)=F_rho_vx(i,j)+dxj
-      F_rho_vy(i,j)=F_rho_vy(i,j)+dyj
+      F_rho(i,j)=F_rho(i,j)-droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
       
-      F_rho(i,j-1)=F_rho(i,j-1)-droj
-      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)-drej
-      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)-dxj
-      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)-dyj
+      F_rho(i,j-1)=F_rho(i,j-1)+droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
       
       
       
@@ -698,25 +704,25 @@ contains
 !
 !     flux terms
 !
-      droi=0.5*(rulnormal+rurnormal-coex*(rr-rl))
-       dxi=0.5*(rulnormal*ul+rurnormal*ur&
+      droi=-0.5*(rulnormal+rurnormal-coex*(rr-rl))
+       dxi=-0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-coex*(rr*ur-rl*ul)) 
-       dyi=0.5*(rulnormal*vl+rurnormal*vr&
+       dyi=-0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-coex*(rr*vr-rl*vl))  
-      drei=0.5*(rulnormal*hl+rurnormal*hr&
+      drei=-0.5*(rulnormal*hl+rurnormal*hr&
      &            -vib(i,j)*(pl+pr)-coex*(rr*er-rl*el))    
     
       
      
-      F_rho(i,j)=F_rho(i,j)+droi
-      F_rho_Et(i,j)=F_rho_Et(i,j)+drei
-      F_rho_vx(i,j)=F_rho_vx(i,j)+dxi
-      F_rho_vy(i,j)=F_rho_vy(i,j)+dyi
+      F_rho(i,j)=F_rho(i,j)-droi
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drei
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxi
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyi
      
-      F_rho(i-1,j)=F_rho(i-1,j)-droi
-      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)-drei
-      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)-dxi
-      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)-dyi
+      F_rho(i-1,j)=F_rho(i-1,j)+droi
+      F_rho_Et(i-1,j)=F_rho_Et(i-1,j)+drei
+      F_rho_vx(i-1,j)=F_rho_vx(i-1,j)+dxi
+      F_rho_vy(i-1,j)=F_rho_vy(i-1,j)+dyi
       
       
       
@@ -783,24 +789,24 @@ contains
 !
 !     flux terms
 !
-      droj=0.5*(rulnormal+rurnormal-coey*(rr-rl))
-       dxj=0.5*(rulnormal*ul+rurnormal*ur&
+      droj=-0.5*(rulnormal+rurnormal-coey*(rr-rl))
+       dxj=-0.5*(rulnormal*ul+rurnormal*ur&
      &            +sav1*(pl+pr)-coey*(rr*ur-rl*ul)) 
-       dyj=0.5*(rulnormal*vl+rurnormal*vr&
+       dyj=-0.5*(rulnormal*vl+rurnormal*vr&
      &            +sav2*(pl+pr)-coey*(rr*vr-rl*vl))  
-      drej=0.5*(rulnormal*hl+rurnormal*hr&
+      drej=-0.5*(rulnormal*hl+rurnormal*hr&
      &            -vjb(i,j)*(pl+pr)-coey*(rr*er-rl*el)) 
            
       
-      F_rho(i,j)=F_rho(i,j)+droj
-      F_rho_Et(i,j)=F_rho_Et(i,j)+drej
-      F_rho_vx(i,j)=F_rho_vx(i,j)+dxj
-      F_rho_vy(i,j)=F_rho_vy(i,j)+dyj
+      F_rho(i,j)=F_rho(i,j)-droj
+      F_rho_Et(i,j)=F_rho_Et(i,j)-drej
+      F_rho_vx(i,j)=F_rho_vx(i,j)-dxj
+      F_rho_vy(i,j)=F_rho_vy(i,j)-dyj
       
-      F_rho(i,j-1)=F_rho(i,j-1)-droj
-      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)-drej
-      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)-dxj
-      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)-dyj
+      F_rho(i,j-1)=F_rho(i,j-1)+droj
+      F_rho_Et(i,j-1)=F_rho_Et(i,j-1)+drej
+      F_rho_vx(i,j-1)=F_rho_vx(i,j-1)+dxj
+      F_rho_vy(i,j-1)=F_rho_vy(i,j-1)+dyj
       
       
       
@@ -823,7 +829,7 @@ contains
       data nrk /1/
       REAL*8:: rkpa(2)
       real*8 :: temp
-      rkpa(1)=1.
+      rkpa(1)=1.0
       rkpa(2)=0.5
 !      
 !     update variables
@@ -853,6 +859,47 @@ contains
       return
       end
       
+      !==============================================================================
+      subroutine RK4
+      !=========================
+      
+      ! compute the right hand side of the Navier-Stokes equations
+      
+      use main
+      
+      integer :: nrk
+      save nrk
+      data nrk /1/
+      REAL*8:: rkpa(4)
+      real*8 :: temp
+      rkpa(1)=1.0/4.0
+      rkpa(2)=1.0/3.0
+      rkpa(3)=0.5
+      rkpa(4)=1.0
+!      
+!     update variables
+!
+      
+      
+      do  j=jb,jm-1
+      do  i=ib,im-1
+      
+      temp=step(i,j)/Vcell(i,j)
+      rho(i,j)      =rho_m1(i,j)       +rkpa(nrk)*F_rho(i,j)*temp
+     
+      rho_Et(i,j)   =rho_Et_m1(i,j)    +rkpa(nrk)*F_rho_Et(i,j)*temp
+     
+      rho_vx(i,j)   =rho_vx_m1(i,j)    +rkpa(nrk)*F_rho_vx(i,j)*temp
+     
+       rho_vy(i,j)  =rho_vy_m1(i,j)    +rkpa(nrk)*F_rho_vy(i,j)*temp
+     
+      end do
+      end do
+      nrk=mod(nrk,4)+1
+      
+      return
+      end
+      
 !====================================================================================
       subroutine update_variables
 !     ===========================
@@ -866,8 +913,8 @@ contains
 !
 !
       
-      do  j=jb,jm-1
-      do  i=ib,im-1
+      do  j=jb-1,jm
+      do  i=ib-1,im
       
 !
       RhoInv=1./rho(i,j)

@@ -49,7 +49,7 @@
           
           Sn_X_j(i,j)=-(y(i+1,j)-y(i,j))
           Sn_Y_j(i,j)=(x(i+1,j)-x(i,j))
-          vjb(i,j)=0.
+          vjb(i,j)=0.0
           
           S_j(i,j)=sqrt(Sn_X_j(i,j)**2+Sn_Y_j(i,j)**2)
       end do
