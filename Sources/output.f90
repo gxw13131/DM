@@ -21,7 +21,7 @@
             open(30,file=nam)
             write(30,*) 'title="contour"'
             write(30,*) 'variables="x","y","u","v",'
-            write(30,*)'"p","den","T","mach","entropy","mu"'
+            write(30,*)'"p","den","T","mach","entropy","mu","k","Omega"'
      
             write(30,*) 'zone i=',im-ib,' j=',jm-jb &
                    &,' f=point'
@@ -37,14 +37,18 @@
              pcar=p(i,j)*Rho_ref*V_ref*V_ref
              rcar=rho(i,j)*Rho_ref
              TT=T(i,j)*T_ref
+             KT_out=KT(i,j)
+             OmegaT_out=OmegaT(i,j)
              entr=pcar/rcar**Gamma
              amach=sqrt(ucar*ucar+vcar*vcar)&
      &             /sqrt(Gamma*pcar/rcar)
              vmur=Mu_E(i,j)*Rho_ref*V_ref*L_ref
              
-             write(30,"(E10.3,1X,  E10.3,1X,   E10.3,1X,  E10.3,1X,E10.3,1X,  E10.3,1X,  E10.3,1X,  E10.3,1X,  E10.3, 1X, E10.3, 1X, E10.3)") xcar,ycar&
+             write(30,"(E10.3,1X,  E10.3,1X,   E10.3,1X,  E10.3,1X,E10.3,1X,&
+     &             E10.3,1X,  E10.3,1X,  E10.3,1X,  E10.3, 1X, E10.3, 1X, E10.3,1X, E10.3, 1X, E10.3)") xcar,ycar&
      &                  ,ucar,vcar&
-     &                  ,pcar,rcar,TT,amach,entr,vmur
+     &                  ,pcar,rcar,TT,amach,entr,vmur,&
+     &                  KT_out,OmegaT_out
            end do
            end do
            close(30)
@@ -74,6 +78,7 @@
           write(1)    vx(i,j),vy(i,j)&
      &               ,p(i,j),rho(i,j)&
      &               ,Mu_L(i,j),Mu_E(i,j)&
+     &               ,KT(i,j),OmegaT(i,j)&
      &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
      &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
       end do

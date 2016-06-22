@@ -34,13 +34,19 @@
       !============================
       ! boundary conditions:
      REAL*8 :: &
-     Vx_inlet,Vy_inlet,p_inlet,T_inlet,Rho_inlet,Mu_inlet,P_out
-      
-     !CURRENT STEP SOLUTION
+     & Vx_inlet,Vy_inlet,p_inlet,T_inlet,Rho_inlet,Mu_inlet,P_out,&
+     & KT_inlet,OmegaT_inlet
+     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     !CURRENT STEP SOLUTION variables
+     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! conservative variables
       REAL*8 :: &
      & rho(iq,jq)&
      &,rho_Et(iq,jq)&
      &,rho_vx(iq,jq),rho_vy(iq,jq)
+     
+     !  turbulence variables
+     REAL*8 :: KT(iq,jq),OmegaT(iq,jq) ! turbulent kinetic energy,Omega
      
      ! primitive variables
      REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
@@ -50,16 +56,24 @@
      &F_rho(iq,jq),F_rho_Et(iq,jq)&
      &,F_rho_vx(iq,jq),F_rho_vy(iq,jq)
      
+     ! TURBULENCE Flux
+     REAL*8 :: F_KT(iq,jq),F_OmegaT(iq,jq)
+     ! TURBULENCE PRODUCTION AND DISSIPATION ITEM
+     REAL*8 :: SPk(iq,jq),SDk(iq,jq)
+     REAL*8 :: SPomega(iq,jq),SDomega(iq,jq)
+     
      ! LAST STEP SOLUTION
      REAL*8 :: &
      &Rho_m1(iq,jq),Rho_Et_m1(iq,jq)&
-     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)     
+     &,Rho_vx_m1(iq,jq),Rho_vy_m1(iq,jq)&
+     &,KT_m1(iq,jq),OmegaT_m1(iq,jq)
+     
   
      ! LAST  2 STEP SOLUTION
      REAL*8 :: &
      &Rho_m2(iq,jq),Rho_Et_m2(iq,jq)&
-     &,Rho_vx_m2(iq,jq),Rho_vy_m2(iq,jq) 
-     
+     &,Rho_vx_m2(iq,jq),Rho_vy_m2(iq,jq)& 
+     &,KT_m2(iq,jq),OmegaT_m2(iq,jq)
      
      REAL*8 :: radius_i(iq,jq),radius_j(iq,jq) !SPECTRAL RADIUS
      
@@ -83,7 +97,7 @@
 
      
      
-     !       
+     ! interface variables      
       REAL*8 :: &
 !      
      &uil (iq,jq),uir(iq,jq),&
@@ -96,9 +110,15 @@
      &pjl (iq,jq),pjr(iq,jq),&
      &rjl (iq,jq),rjr(iq,jq)
 
+     REAL*8 :: &
+     & KTil(iq,jq),KTir(iq,jq),&
+     & OmegaTil(iq,jq),OmegaTir(iq,jq),&
      
-    
-      integer :: &
+     & KTjl(iq,jq),KTjr(iq,jq),&
+     & OmegaTjl(iq,jq),OmegaTjr(iq,jq)
+     
+    integer :: TimeMarch ! select time marching method 0:LUSGS; 1:RK2; 2:RK4
+    integer :: &
      &nmax,n,is_restart,&
      &ioup,iinp,icgl,iimplicit,idgstart&
      &,nts1p,nunsloop,ninnerloop,is_print,iprint,istart,nb

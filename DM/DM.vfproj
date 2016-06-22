@@ -56,5 +56,6 @@
 		<File RelativePath="..\Sources\module.f90"/>
 		<File RelativePath="..\Sources\output.f90"/>
 		<File RelativePath="..\Sources\solver.f90"/>
+		<File RelativePath=".\SST_g.f90"/>
 		<File RelativePath="..\Sources\viscous_g.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

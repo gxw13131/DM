@@ -55,6 +55,8 @@
       Vy_inlet=0.0
       p_inlet=101325.0
       T_inlet=300.0
+      KT_inlet=9.0e-9 !
+      OmegaT_inlet=1.0e-6 !
       rho_inlet=p_inlet/T_inlet/R_air
       Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
       P_out=0.0
@@ -203,7 +205,7 @@
              ! xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
               !yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
 !==============================================================
-              ! initilize the flow field with 
+              ! initialize the flow field with 
                    rho(i,j)=rho_inlet
                    vx(i,j)=Vx_inlet
                    vy(i,j)=Vy_inlet
@@ -211,11 +213,14 @@
                     Mu_L(i,j)=Mu_inlet
                     Mu_E(i,j)=Mu_inlet
                     T(i,j)=T_inlet
+                ! initialize turbulence variables
+                    KT(i,j)=KT_inlet
+                    OmegaT(i,j)=OmegaT_inlet
 
       end do
       end do
       
-      
+      !initialize the last and 2nd last step solutions:
       do  i=1,iq
       do  j=1,jq
       
@@ -258,6 +263,7 @@
              read(5) vx(i,j),vy(i,j)&
      &               ,p(i,j),rho(i,j)&
      &               ,Mu_L(i,j),Mu_T(i,j)&
+     &               ,KT(i,j),OmegaT(i,j)&
      &               ,Rho_m1(i,j),Rho_Et_m1(i,j)&
      &               ,Rho_vx_m1(i,j),Rho_vy_m1(i,j)
      

@@ -23,13 +23,16 @@
       T(i,j)=T_inlet
       Mu_L(i,j)=Mu_inlet
       Mu_E(i,j)=Mu_L(i,j)
+      !turbulence BC
+      KT(i,j)=KT_inlet
+      OmegaT(i,j)=OmegaT_inlet
        !    rho(i,j)=max(2.*rho(i+1,j)-rho(i+2,j),1.0e-10)
        !    vx(i,j)=2.*vx(i+1,j)-vx(i+2,j)
        !    vy(i,j)=2.*vy(i+1,j)-vy(i+2,j)
        !     p(i,j)=max(2.*p(i+1,j)-p(i+2,j),1.0e-10)
        !  Mu_E(i,j)=2.*Mu_E(i+1,j)-Mu_E(i+2,j)
        !  Mu_L(i,j)=2.*Mu_L(i+1,j)-Mu_L(i+2,j)
-       L_Cell_x(i,j)=L_Cell_x(i+1,j)
+       !L_Cell_x(i,j)=L_Cell_x(i+1,j)
        
       end do
      
@@ -44,6 +47,10 @@
       vx(i,j)=2.*vx(i-1,j)-vx(i-2,j)
       vy(i,j)=2.*vy(i-1,j)-vy(i-2,j)
       rho(i,j)=max(2.*rho(i-1,j)-rho(i-2,j),1.0e-10)
+      !turbulence BC
+      KT(i,j)=2.*KT(i-1,j)-KT(i-2,j)
+      OmegaT(i,j)=2.*OmegaT(i-1,j)-OmegaT(i-2,j)
+      
       Mu_E(i,j)=2.*Mu_E(i-1,j)-Mu_E(i-2,j)
       Mu_L(i,j)=2.*Mu_L(i-1,j)-Mu_L(i-2,j)
  ! L_Cell_x(i,j)=L_Cell_x(i-1,j)
@@ -77,6 +84,10 @@
       vy(i,j-1)=-vy(i,j)  !!!
       p(i,j-1)=p(i,j)
       rho(i,j-1)=rho(i,j)
+      !turbulence BC
+      KT(i,j-1)=-KT(i,j)
+      OmegaT(i,j-1)=2.0*60*Mu_E(i,j)/rho(i,j)/0.83/(yc(i,j)**2)-OmegaT(i,j)
+      
       Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
       T(i,j-1)=T(i,j) !adiabatic wall
@@ -87,6 +98,9 @@
       vy(i,j-1)=vy(i,j)
       p(i,j-1)=p(i,j)
       rho(i,j-1)=rho(i,j)
+      !turbulence BC
+      KT(i,j-1)=KT(i,j)
+      OmegaT(i,j-1)=OmegaT(i,j)
       Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
       T(i,j-1)=T(i,j)
@@ -134,6 +148,8 @@
           vil(i,j)=Vy_inlet
           pil(i,j)=p_inlet
           ril(i,j)=rho_inlet
+          KTil(i,j)=KT_inlet
+          OmegaTil(i,j)=OmegaT_inlet
       
       end do
       
@@ -144,8 +160,9 @@
        uir(i,j)=uil(i,j)
        vir(i,j)=vil(i,j)
        pir(i,j)=pil(i,j)
-       rir(i,j)=rir(i,j)
-      
+       rir(i,j)=ril(i,j)
+       KTir(i,j)=KTil(i,j)
+       OmegaTir(i,j)=OmegaTil(i,j)
       
       end do
      
@@ -167,11 +184,15 @@
       pjr(i,j)=pjl(i,j)
       !rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
       rjr(i,j)=rjl(i,j)
+      KTjr(i,j)=0.0
+      OmegaTjr(i,j)=60*Mu_E(i,j)/rho(i,j)/0.83/(yc(i,j)**2)
       else
       ujl(i,j)=0.5*(vx(i,j)+vx(i,j-1))
       vjl(i,j)=0.5*(vy(i,j)+vy(i,j-1))
       pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
       rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
+      KTjl(i,j)=0.5*(KT(i,j)+KT(i,j-1))
+      OmegaTjl(i,j)=0.5*(OmegaT(i,j)+OmegaT(i,j-1))
       end if
       
       end do
@@ -182,18 +203,16 @@
       
       do i=ib,im-1
       
-         
-            
-      
       ujr(i,j)=0.5*(vx(i,j)+vx(i,j+1))
       vjr(i,j)=0.5*(vy(i,j)+vy(i,j+1))
       pjr(i,j)=0.5*(p(i,j)+p(i,j+1))
       rjr(i,j)=0.5*(rho(i,j)+rho(i,j+1))
- 
+      
+      KTjr(i,j)=0.5*(KT(i,j)+KT(i,j+1))
+      OmegaTjr(i,j)=0.5*(OmegaT(i,j)+OmegaT(i,j+1))
       
       end do
 
-       
       return
       end
      

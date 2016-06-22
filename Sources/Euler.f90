@@ -1,7 +1,4 @@
 !==================================================================!
-!======= 2d Euler solver ==========!
-!==================================================================!
-!                  V 1.0 by REN Yuxin, Oct. 12, 2007
 !==================================================================!
 !
 !
@@ -28,9 +25,19 @@
 !
 !     start of main iteration loop
 !     ----------------------------
-!
-      pSolver=>LUSGS
-      
+      TimeMarch=0 ! LUSGS is the default time marching method
+      select case (TimeMarch)
+      case (1)
+       pSolver=>RK2
+       N_loop=2
+      case (2)
+       pSolver=>RK4
+       N_loop=4
+      case default
+       pSolver=>LUSGS
+       N_loop=1
+      end select
+    
       is_End=0
 !     if is_End==1, the computation stops
       
@@ -71,14 +78,11 @@
 !
 !     solve Euler equations
 !     ------------------
-!
-      !call solver
-      !call solver
-      !call solver
-      call solver
-!     subroutine solver: solve the ns equation for one Runge-Kutta stage      
+      do ii=1,N_loop !RK-2 needs 2 loops, RK-4 needs 4 loops, LUSGS needs 1 loops
+       call solver
+      end do
       
-      !end do
+      
 !
 !
       if(.not.steady1) ttime=ttime+step(ib,jb)

@@ -8,28 +8,18 @@
       CALL CPU_TIME ( time1 )
 !     compute the area-vectors and interpolation coordinates  
         
-!     ==========================      
-!      CALL CPU_TIME ( time4 )
 !*****************************************************************************
 !     set ghost-cell at boundary for various boundary conditions
       call bc_ghostcell_value
-!      CALL CPU_TIME ( time5 )
-!     ======================
 
 !     interpolate the primitive variables to cell interfaces
       call interpolation_to_interface
-!      CALL CPU_TIME ( time6 )
-!     ===============================
 
 !     MUSCL interpolation at cell interface except boundaries
       call muscl_interpolation 
-!      CALL CPU_TIME ( time10 )
-!     ========================
 
 !     set muscl_interpolated value at the cell interfaces on the boundary
       call bc_muscl_interpolation
-!      CALL CPU_TIME ( time11 )
-!     ===========================
 
 !     evaluate the inviscid fluxes 
       select case (irsolver)
@@ -43,16 +33,17 @@
       
 !       compute the viscous flux
       call viscous_Flux
-!     ====================  
-!      CALL CPU_TIME ( time12 )
+
 !*****************************************************************************
 !     Runge-Kutta time stepping
    !   call Runge_Kutta
   !    call LUSGS
       call pSolver
-!     =====================                
-!      CALL CPU_TIME ( time13 )
-      
+
+!    Turbulence model SST      
+      call SST_Reconstruct_MUSCL   
+      call SST_Flux_Lax
+      call SST_LUSGS
 !*****************************************************************************
 !     update variables
       call update_variables
