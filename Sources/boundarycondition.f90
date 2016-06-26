@@ -86,7 +86,7 @@
       rho(i,j-1)=rho(i,j)
       !turbulence BC
       KT(i,j-1)=-KT(i,j)
-      OmegaT(i,j-1)=2.0*60*Mu_E(i,j)/rho(i,j)/0.83/(yc(i,j)**2)-OmegaT(i,j)
+      OmegaT(i,j-1)=2.0*60*Mu_E(i,j)/rho(i,j)/0.83/(DistW(i,j)**2)-OmegaT(i,j)
       
       Mu_E(i,j-1)=Mu_E(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
@@ -127,9 +127,10 @@
 
 !================================================================================== 
 
-      subroutine bc_muscl_interpolation
+      subroutine BC_FIX
       !================================
       use main
+      use ConstTurbulence
       real*8 :: xHalf
       ! set muscl_interpolated value at the cell interfaces on the boundary
       
@@ -175,7 +176,7 @@
       do i=ib,im-1
       	
     xhalf=0.5*(x(i,j)+x(i+1,j))
-      if(xhalf>=1.0) then  !x<1,¾ùÔÈÀ´Á÷Ìõ¼þ£¬·ñÔò¹Ì±ÚÌõ¼þ  
+      if(xhalf>=1.0) then  ! wall begin from x=1.0
       ujl(i,j)=0.0
       vjl(i,j)=0.0
       ujr(i,j)=ujl(i,j)
@@ -185,7 +186,7 @@
       !rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
       rjr(i,j)=rjl(i,j)
       KTjr(i,j)=0.0
-      OmegaTjr(i,j)=60*Mu_E(i,j)/rho(i,j)/0.83/(yc(i,j)**2)
+      OmegaTjr(i,j)=60*Mu_L(i,j)/beta1/(DistW(i,j)**2)
       else
       ujl(i,j)=0.5*(vx(i,j)+vx(i,j-1))
       vjl(i,j)=0.5*(vy(i,j)+vy(i,j-1))

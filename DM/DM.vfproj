@@ -49,6 +49,7 @@
 		<File RelativePath=".\AUSMPWplus_g.f90"/>
 		<File RelativePath="..\Sources\boundarycondition.f90"/>
 		<File RelativePath=".\ConstTurbulence.f90"/>
+		<File RelativePath=".\Derivative_g.f90"/>
 		<File RelativePath="..\Sources\Euler.f90"/>
 		<File RelativePath="..\Sources\flowfield.f90"/>
 		<File RelativePath="..\Sources\geometry.f90"/>

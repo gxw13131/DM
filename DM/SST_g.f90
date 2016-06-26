@@ -206,6 +206,8 @@ end subroutine SST_Flux_Lax
 
 subroutine SST_RHS
 ! compute the Diffusion, Production and Dissipation item
+! all added to the F_KT,F_OmegaT
+! next it will be used in LUSGS process
 
 use main
 use ConstTurbulence !import turbulence constant
@@ -221,10 +223,10 @@ real*8 :: sigmaK,sigmaO,beta,gmt
 real*8 :: G,G1,G2,G3
 real*8 :: F1,F2
 real*8 :: CD_KO
-real*8 :: sav1,sav2
+real*8 :: sav1,sav2,Vol
 ! distance weight
 real*8 :: CL,CR,alsinv
-real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
+real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
 
       do j=jb,jm-1
       do i=ib,im
@@ -273,7 +275,7 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       ! distance weight for interpolate the interface variables
       alsinv=1./(L_Cell_y(i,j)+L_Cell_y(i,j-1))
       CL=L_Cell_y(i,j)*alsinv
-      CR=L_Cell_x(i,j-1)*alsinv
+      CR=L_Cell_y(i,j-1)*alsinv
       
       Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i,j-1)+CR*Mu_L(i,j)
@@ -309,8 +311,10 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !                 SOURCE ITEM
+      Vol   = Vcell(i,j)
       Rho_ =rho(i,j)
       MuL_ =Mu_L(i,j)
+      MuT_ =Mu_T(i,j)
       dist_=distW(i,j)
       KT_  =KT(i,j)/Rho(i,j)
       OmegaT_=OmegaT(i,j)/Rho(i,j)
@@ -324,7 +328,17 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       F1=tanh(G**4)
       
       beta  =F1*beta1+(1.0-F1)*beta2
-      gmt   =F1*gmt1+(1.0-F1)*gmt2      
+      gmt   =F1*gmt1+(1.0-F1)*gmt2 
+      ! cell volume should be coupled in the source item
+      KT_Sp=(MuT_*Vort(i,j)**2)*Vol
+      KT_Sd=(-beta*KT_*OmegaT_)*Vol
+      
+      OmegaT_Sp=(gmt*Vort(i,j)**2)*Vol
+      OmegaT_Sd=(-beta*OmegaT_**2+2.0*(1-F1)*sigmaO2*dKdO(i,j)/OmegaT_)*Vol !cross item
+      
+      
+      F_KT(i,j)=F_KT(i,j)+KT_Sp+KT_Sd
+      F_OmegaT(i,j)=F_OmegaT(i,j)+OmegaT_Sp+OmegaT_Sd
       end do
       end do
 end subroutine 
@@ -461,11 +475,9 @@ use main
       dKTm     =F_KT(i,j+1)
       dOmegaTm  =F_OmegaT(i,j+1)
       
-      
       dKTJ     =0.5*(Vn*dKTm     -radius_j(i,j+1)*dKTm)
       dOmegaTJ   =0.5*(Vn*dOmegaTm   -radius_j(i,j+1)*dOmegaTm)
      
-    
       temp=beta(i,j)/Ng(i,j)
       
       F_KT(i,j)    =F_KT(i,j)    -(dKTI+dKTJ)      *temp

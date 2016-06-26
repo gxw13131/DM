@@ -1096,7 +1096,8 @@ contains
       TT=T(i,j)*T_ref
       Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
       
-      Mu_T(i,j)=min(rho(i,j)*KT(i,j)/OmegaT(i,j),5*Mu_L(i,j))
+      !Mu_T(i,j)=min(rho(i,j)*KT(i,j)/OmegaT(i,j),3*Mu_L(i,j))
+      Mu_T(i,j)=10*Mu_L(i,j)
       Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
       end do
       end do

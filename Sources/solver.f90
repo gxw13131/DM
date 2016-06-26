@@ -17,28 +17,29 @@
 
 !     MUSCL interpolation at cell interface except boundaries
       call muscl_interpolation 
-
 !     set muscl_interpolated value at the cell interfaces on the boundary
       call Reconstruct
-
+!!!!  TURBULENCE interpolate the interface variables
+      call SST_Reconstruct_MUSCL    !T
+!      fix BC flux to guarantee BC
+      call BC_FIX
 !     evaluate the inviscid fluxes 
       call RiemannSolver
+!!!! TURBULENCE convective item
+      call SST_Flux_Lax      !T
       
 !       compute the viscous flux
       call viscous_Flux
+!!!! TURBULENCE compute SS,Vorticity,dKdO 
+      call Derivative2rd    !T
+      ! Diffusion+Production+Destruction item
+      call SST_RHS          !T
 
-!*****************************************************************************
-!     Runge-Kutta time stepping
-   !   call Runge_Kutta
-  !    call LUSGS
       call pSolver
-
-!    Turbulence model SST      
-      call SST_Reconstruct_MUSCL   
-      call SST_Flux_Lax
-      call SST_LUSGS
-!*****************************************************************************
-!     update variables
+!!!! TURBULENCE update k and Omega
+ !     call SST_LUSGS        !T
+     
+!     update all variables
       call update_variables
 !     ===================== 
       

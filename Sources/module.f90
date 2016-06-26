@@ -66,7 +66,7 @@
      !  turbulence variables
      REAL*8 :: KT(iq,jq),OmegaT(iq,jq) ! turbulent kinetic energy,Omega
      !  VORTICITY AND SHEAR STRAIN
-     REAL*8 :: Vort(iq,jq),SSM2(iq,jq)
+     REAL*8 :: Vort(iq,jq),SSM2(iq,jq),DIV(iq,jq),dKdO(iq,jq)
      REAL*8 :: DistW(iq,jq) !distance to the nearest wall
      ! primitive variables
      REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
@@ -232,6 +232,27 @@
          &((x(ii+1,jj)-x(ii,jj))*(yc(ii,jj)-yc(ii,jj-1)) &
          &-(y(ii+1,jj)-y(ii,jj))*(xc(ii,jj)-xc(ii,jj-1)) )
        
+    end function
+    ! get the directional derivative by Green method
+    ! interface flux is to be used
+    function dx(FW,FE,FN,FS,ii,jj)
+    implicit none
+    real*8 :: FW(iq,jq),FE(iq,jq),FN(iq,jq),FS(iq,jq)
+    real*8 :: dx
+    integer :: ii,jj
+    dx=(FE(i+1,j)*SN_x_i(i+1,j)-FW(i,j)*SN_x_i(i,j)&
+    &     +FN(i,j+1)*SN_x_j(i,j+1)-FS(i,j)*SN_x_j(i,j))&
+            &/Vcell(i,j)
+    end function
+    
+    function dy(FW,FE,FN,FS,ii,jj)
+    implicit none
+    real*8 :: FW(iq,jq),FE(iq,jq),FN(iq,jq),FS(iq,jq)
+    real*8 :: dy
+    integer :: ii,jj
+    dy=(FE(i+1,j)*SN_Y_i(i+1,j)-FW(i,j)*SN_Y_i(i,j)&
+    &     +FN(i,j+1)*SN_Y_j(i,j+1)-FS(i,j)*SN_Y_j(i,j))&
+            &/Vcell(i,j)
     end function
     
       end module main
