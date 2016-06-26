@@ -48,6 +48,7 @@
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath=".\AUSMPWplus_g.f90"/>
 		<File RelativePath="..\Sources\boundarycondition.f90"/>
+		<File RelativePath=".\ConstTurbulence.f90"/>
 		<File RelativePath="..\Sources\Euler.f90"/>
 		<File RelativePath="..\Sources\flowfield.f90"/>
 		<File RelativePath="..\Sources\geometry.f90"/>
@@ -57,5 +58,6 @@
 		<File RelativePath="..\Sources\output.f90"/>
 		<File RelativePath="..\Sources\solver.f90"/>
 		<File RelativePath=".\SST_g.f90"/>
-		<File RelativePath="..\Sources\viscous_g.f90"/></Filter></Files>
+		<File RelativePath="..\Sources\viscous_g.f90"/>
+		<File RelativePath=".\WENO_g.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

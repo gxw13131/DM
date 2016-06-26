@@ -2,6 +2,7 @@ subroutine SST_Reconstruct_MUSCL
     use main
     
     REAL*8 :: dl,dr
+    real*8 :: alsinv
     ! interpolate the turbulence variables (k/w) to cell interfaces
       
       ! iface
@@ -77,7 +78,7 @@ subroutine SST_Reconstruct_MUSCL
 contains
       function  alimiter(var1,var2)
       real*8 :: var1,var2
-      
+      real*8 :: epsm=1e-8
       real*8 :: alimiter
        alimiter=(var1*(var2*var2+2.*epsm*epsm)+&
      &                     var2*(2.*var1*var1+epsm*epsm))/&
@@ -92,7 +93,17 @@ end subroutine  SST_Reconstruct_MUSCL
 subroutine SST_Flux_Lax
 use main
 REAL*8 :: ul,ur,vl,vr,KTl,KTr,OmegaTl,OmegaTr,rl,rr
+REAL*8 :: uln,urn ! normal velocity
 REAL*8 :: sav1,sav2
+real*8 :: eigenT ! eigen velocity of turbulence
+real*8 :: dKT,dOmegaT
+    do j=jb,jm-1
+    do i=ib,im 
+
+    F_KT(i,j)=0.0
+    F_OmegaT(i,j)=0.0
+    end do 
+    end do
 ! evaluate the  fluxes   
 !
 ! -   i direction
@@ -193,14 +204,55 @@ REAL*8 :: sav1,sav2
       return
 end subroutine SST_Flux_Lax
 
-subroutine SST_Diffusion
+subroutine SST_RHS
+! compute the Diffusion, Production and Dissipation item
+
 use main
-real*8 :: KT_Df,OmegaT_Df
-real*8 :: sigmaK=1/0.5
-real*8 :: sigmaO=1/0.5
-! -   i direction
+use ConstTurbulence !import turbulence constant
+
+real*8 :: KT_Df,OmegaT_Df !diffusion item
+real*8 :: KT_Sp,OmegaT_Sp !production item
+real*8 :: KT_Sd,OmegaT_Sd !dissipation item
+
+real*8 :: sigmaK,sigmaO,beta,gmt
+
+!temp variables
+
+real*8 :: G,G1,G2,G3
+real*8 :: F1,F2
+real*8 :: CD_KO
+real*8 :: sav1,sav2
+! distance weight
+real*8 :: CL,CR,alsinv
+real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
+
       do j=jb,jm-1
       do i=ib,im
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !             DIFFUSION ITEM
+      ! -   i direction 
+      ! distance weight for interpolate the interface variables
+      alsinv=1./(L_Cell_x(i,j)+L_Cell_x(i-1,j))
+      CL=L_Cell_x(i,j)*alsinv
+      CR=L_Cell_x(i-1,j)*alsinv
+      
+      Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
+      MuL_ =CL*Mu_L(i-1,j)+CR*Mu_L(i,j)
+      dist_=CL*disW(i-1,j)+CR*disW(i,j)
+      KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
+      OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
+      
+      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
+      &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
+      G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
+      G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
+      G3=sqrt(KT_)/Cmu/OmegaT_/dist_
+      G=min(max(G1,G3),G2)
+      F1=tanh(G**4)
+      !at different interface, F1 is recomputed according to different local variables
+      sigmaK    =sigmaK1*F1 +sigmaK2*(1.0-F1)
+      sigmaO    =sigmaO1*F1 +sigmaO2*(1.0-F1)
+      
      
       sav1=Sn_X_i(i,j) !dy
       sav2=Sn_Y_i(i,j) !dx
@@ -215,12 +267,31 @@ real*8 :: sigmaO=1/0.5
       
       F_KT(i-1,j)=F_KT(i-1,j)+KT_Df
       F_OmegaT(i-1,j)=F_OmegaT(i-1,j)+OmegaT_Df
-      end do
-      end do
+      
 
 ! -   j direction
-      do j=jb,jm
-      do i=ib,im-1 
+      ! distance weight for interpolate the interface variables
+      alsinv=1./(L_Cell_y(i,j)+L_Cell_y(i,j-1))
+      CL=L_Cell_y(i,j)*alsinv
+      CR=L_Cell_x(i,j-1)*alsinv
+      
+      Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
+      MuL_ =CL*Mu_L(i,j-1)+CR*Mu_L(i,j)
+      dist_=CL*disW(i,j-1)+CR*disW(i,j)
+      KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
+      OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
+      
+      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
+      &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
+      G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
+      G2=4.0*sigmaO2*Rho_*KT_/dist**2/CD_KO
+      G3=sqrt(KT_)/Cmu/OmegaT_/dist_
+      G=min(max(G1,G3),G2)
+      F1=tanh(G**4)
+      
+      sigmaK    =sigmaK1*F1 +sigmaK2*(1.0-F1)
+      sigmaO    =sigmaO1*F1 +sigmaO2*(1.0-F1)
+      
       sav1=Sn_X_j(i,j)
       sav2=Sn_Y_j(i,j)  
       
@@ -235,11 +306,28 @@ real*8 :: sigmaO=1/0.5
       
       F_KT(i,j-1)=F_KT(i,j-1)+KT_Df
       F_OmegaT(i,j-1)=F_OmegaT(i,j-1)+OmegaT_Df
+      
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !                 SOURCE ITEM
+      Rho_ =rho(i,j)
+      MuL_ =Mu_L(i,j)
+      dist_=disW(i,j)
+      KT_  =KT(i,j)/Rho(i,j)
+      OmegaT_=OmegaT(i,j)/Rho(i,j)
+      
+      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
+      &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
+      G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
+      G2=4.0*sigmaO2*Rho_*KT_/dist**2/CD_KO
+      G3=sqrt(KT_)/Cmu/OmegaT_/dist_
+      G=min(max(G1,G3),G2)
+      F1=tanh(G**4)
+      
+      beta  =F1*beta1+(1.0-F1)*beta2
+      gmt   =F1*gmt1+(1.0-F1)*gmt2      
       end do
       end do
-
-
-end subroutine SST_Diffusion
+end subroutine 
 
 subroutine SST_LUSGS
 use main
@@ -266,12 +354,6 @@ use main
       F_OmegaT(i,j) =   F_OmegaT(i,j)&
                        &-(1.5*OmegaT(i,j)   -2.0*OmegaT_m1(i,j) +0.5*OmegaT_m2(i,j))&
                        &*Vcell(i,j)/dt_physics
-       !  Source Item
-                       
-        
-        
-       !  Dissipation Item 
-                       
                        
       end do
       end do

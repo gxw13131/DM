@@ -268,10 +268,46 @@ contains
       
       end
       
+      subroutine WENO5_interpolation
+      use main
+      implicit none
+      do j=jb,jm-1
+      do i=ib,im
+         
+         uil(i,j)=WENO5(vx(i-3,j),vx(i-2,j),vx(i-1,j),vx(i,j),vx(i+1,j))
+         uir(i,j)=WENO5(vx(i+2,j),vx(i+1,j),vx(i,j),vx(i-1,j),vx(i-2,j))
+         
+         vil(i,j)=WENO5(vy(i-3,j),vy(i-2,j),vy(i-1,j),vy(i,j),vy(i+1,j))
+         vir(i,j)=WENO5(vy(i+2,j),vy(i+1,j),vy(i,j),vy(i-1,j),vy(i-2,j))
+         
+         pil(i,j)=WENO5(p(i-3,j),p(i-2,j),p(i-1,j),p(i,j),p(i+1,j))
+         pir(i,j)=WENO5(p(i+2,j),p(i+1,j),p(i,j),p(i-1,j),p(i-2,j))
+         
+         ril(i,j)=WENO5(Rho(i-3,j),Rho(i-2,j),Rho(i-1,j),Rho(i,j),Rho(i+1,j))
+         rir(i,j)=WENO5(Rho(i+2,j),Rho(i+1,j),Rho(i,j),Rho(i-1,j),Rho(i-2,j))
       
+      end do
+      end do
       
-      
-      
+     
+      do j=jb,jm
+       do i=ib,im-1
+         ujl(i,j)=WENO5(vx(i,j-3),vx(i,j-2),vx(i,j-1),vx(i,j),vx(i,j+1))
+         ujr(i,j)=WENO5(vx(i,j+2),vx(i,j+1),vx(i,j),vx(i,j-1),vx(i,j-2))
+         
+         vjl(i,j)=WENO5(vy(i,j-3),vy(i,j-2),vy(i,j-1),vy(i,j),vy(i,j+1))
+         vjr(i,j)=WENO5(vy(i,j+2),vy(i,j+1),vy(i,j),vy(i,j-1),vy(i,j-2))
+         
+         pjl(i,j)=WENO5(p(i,j-3),p(i,j-2),p(i,j-1),p(i,j),p(i,j+1))
+         pjr(i,j)=WENO5(p(i,j+2),p(i,j+1),p(i,j),p(i,j-1),p(i,j-2))
+         
+         rjl(i,j)=WENO5(Rho(i,j-3),Rho(i,j-2),Rho(i,j-1),Rho(i,j),Rho(i,j+1))
+         rjr(i,j)=WENO5(Rho(i,j+2),Rho(i,j+1),Rho(i,j),Rho(i,j-1),Rho(i,j-2))
+         
+         
+      end do
+      end do
+      end subroutine
       !====================================================================================     
        
       subroutine inviscid_fluxes_roe

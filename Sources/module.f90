@@ -47,7 +47,9 @@
      
      !  turbulence variables
      REAL*8 :: KT(iq,jq),OmegaT(iq,jq) ! turbulent kinetic energy,Omega
-     
+     !  VORTICITY AND SHEAR STRAIN
+     REAL*8 :: Vort(iq,jq),SSM2(iq,jq)
+     REAL*8 :: DisW(iq,jq) !distance to the nearest wall
      ! primitive variables
      REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
      
