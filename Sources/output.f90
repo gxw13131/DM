@@ -6,6 +6,7 @@
       integer :: k
       
       real*8 :: Xcar, Ycar,Ucar,Vcar,Pcar,Rcar,entr,Amach,Vmur,TT
+      real*8 :: KT_print,OmegaT_print
         if(mod(n,iprint)==0) then
         k=(n/iprint)
         if(k<1000) then
@@ -37,8 +38,8 @@
              pcar=p(i,j)*Rho_ref*V_ref*V_ref
              rcar=rho(i,j)*Rho_ref
              TT=T(i,j)*T_ref
-             KT_out=KT(i,j)
-             OmegaT_out=OmegaT(i,j)
+             KT_print=KT(i,j)
+             OmegaT_print=OmegaT(i,j)
              entr=pcar/rcar**Gamma
              amach=sqrt(ucar*ucar+vcar*vcar)&
      &             /sqrt(Gamma*pcar/rcar)
@@ -48,7 +49,7 @@
      &             E10.3,1X,  E10.3,1X,  E10.3,1X,  E10.3, 1X, E10.3, 1X, E10.3,1X, E10.3, 1X, E10.3)") xcar,ycar&
      &                  ,ucar,vcar&
      &                  ,pcar,rcar,TT,amach,entr,vmur,&
-     &                  KT_out,OmegaT_out
+     &                  KT_print,OmegaT_print
            end do
            end do
            close(30)

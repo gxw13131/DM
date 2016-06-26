@@ -19,17 +19,10 @@
       call muscl_interpolation 
 
 !     set muscl_interpolated value at the cell interfaces on the boundary
-      call bc_muscl_interpolation
+      call Reconstruct
 
 !     evaluate the inviscid fluxes 
-      select case (irsolver)
-      case (1)
-        call inviscid_fluxes_lax
-      case (2)
-        call inviscid_fluxes_AUSMPWplus
-      case default
-        call inviscid_fluxes_roe
-      end select
+      call RiemannSolver
       
 !       compute the viscous flux
       call viscous_Flux

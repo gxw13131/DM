@@ -238,7 +238,7 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       
       Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i-1,j)+CR*Mu_L(i,j)
-      dist_=CL*disW(i-1,j)+CR*disW(i,j)
+      dist_=CL*distW(i-1,j)+CR*distW(i,j)
       KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
       OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
       
@@ -277,14 +277,14 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       
       Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i,j-1)+CR*Mu_L(i,j)
-      dist_=CL*disW(i,j-1)+CR*disW(i,j)
+      dist_=CL*distW(i,j-1)+CR*distW(i,j)
       KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
       OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
       
       CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
       &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
       G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
-      G2=4.0*sigmaO2*Rho_*KT_/dist**2/CD_KO
+      G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
       G3=sqrt(KT_)/Cmu/OmegaT_/dist_
       G=min(max(G1,G3),G2)
       F1=tanh(G**4)
@@ -311,14 +311,14 @@ real*8 :: Rho_,MuL_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
       !                 SOURCE ITEM
       Rho_ =rho(i,j)
       MuL_ =Mu_L(i,j)
-      dist_=disW(i,j)
+      dist_=distW(i,j)
       KT_  =KT(i,j)/Rho(i,j)
       OmegaT_=OmegaT(i,j)/Rho(i,j)
       
       CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
       &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
       G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
-      G2=4.0*sigmaO2*Rho_*KT_/dist**2/CD_KO
+      G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
       G3=sqrt(KT_)/Cmu/OmegaT_/dist_
       G=min(max(G1,G3),G2)
       F1=tanh(G**4)

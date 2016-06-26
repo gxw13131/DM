@@ -10,6 +10,7 @@
 
      integer :: IS_END
      real*8 :: TIME1,TIME2
+     integer :: N_loop,II
 !
       open (2,file='Euler.his',status='unknown')
 !     bl.his:file that store the computation history
@@ -20,11 +21,12 @@
       write(*,*) '1'
 !
       call startup
-      
+      ! compute the wall distance
+      call DistanceWall
       write(*,*) '2'
 !
 !     start of main iteration loop
-!     ----------------------------
+!----------------------------
       TimeMarch=0 ! LUSGS is the default time marching method
       select case (TimeMarch)
       case (1)
@@ -36,6 +38,32 @@
       case default
        pSolver=>LUSGS
        N_loop=1
+      end select
+!--------------------------------------------
+!       select the Reconstruction method
+!       1: MUSCL; 2: WENO3; 3: WENO5
+!       default is MUSCL
+      iReconstruct=0
+      select case (iReconstruct)
+      case (1)
+        Reconstruct => WENO3_interpolation
+      case (2)
+        Reconstruct => WENO5_interpolation
+      case default
+        Reconstruct => muscl_interpolation
+      end select
+!---------------------------------------------
+!       select the Riemann solver
+!       1: Lax ; 2: AUSMPW+ ; others: Roe
+!       default is Roe 
+      
+      select case (irsolver)
+      case (1)
+        RiemannSolver => inviscid_fluxes_lax
+      case (2)
+        RiemannSolver => inviscid_fluxes_AUSMPWplus
+      case default
+        RiemannSolver => inviscid_fluxes_roe
       end select
     
       is_End=0

@@ -17,17 +17,35 @@
         
         subroutine RK4
         end subroutine RK4
+        
+        subroutine inviscid_fluxes_lax
+        end subroutine inviscid_fluxes_lax
+        
+        subroutine inviscid_fluxes_AUSMPWplus
+        end subroutine inviscid_fluxes_AUSMPWplus
      
+        subroutine inviscid_fluxes_roe
+        end subroutine inviscid_fluxes_roe
+        
+        subroutine muscl_interpolation
+        end subroutine muscl_interpolation
+        
+        subroutine WENO3_interpolation
+        end subroutine WENO3_interpolation
+        
+        subroutine WENO5_interpolation
+        end subroutine WENO5_interpolation
       end interface
       
-     
+! function pointer
      procedure(LUSGS),pointer:: pSolver=>NULL()
-      
+     procedure(inviscid_fluxes_roe),pointer:: RiemannSolver=>NULL()
+     procedure(muscl_interpolation),pointer:: Reconstruct=>NULL()
       logical :: steady1
       
       integer :: &
      & ib,jb &
-     &,im,jm,irsolver
+     &,im,jm,irsolver,iReconstruct
      
       REAL*8 :: &
      & L_ref,V_ref,Rho_ref,T_ref,Ma_ref
@@ -49,7 +67,7 @@
      REAL*8 :: KT(iq,jq),OmegaT(iq,jq) ! turbulent kinetic energy,Omega
      !  VORTICITY AND SHEAR STRAIN
      REAL*8 :: Vort(iq,jq),SSM2(iq,jq)
-     REAL*8 :: DisW(iq,jq) !distance to the nearest wall
+     REAL*8 :: DistW(iq,jq) !distance to the nearest wall
      ! primitive variables
      REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
      
