@@ -3,7 +3,9 @@ subroutine SST_Reconstruct_MUSCL
     
     REAL*8 :: dl,dr
     real*8 :: alsinv
-    ! interpolate the turbulence variables (k/w) to cell interfaces
+    real*8 :: temp
+!----------------------------------------------------------------------
+! linear interpolate the turbulence variables (k/w) to cell interfaces
       
       ! iface
      
@@ -47,30 +49,30 @@ subroutine SST_Reconstruct_MUSCL
       
           dr=(KTil(i+1,j)-  KT(i,j))*2.
           dl=(KT(i,j)    -KTir(i,j))*2. !KTir(i,j)=KTil(i,j)
-      
-          KTir(i,j)  =KT(i,j)-0.5*alimiter(dl,dr)
-          KTil(i+1,j)=KT(i,j)+0.5*alimiter(dr,dl)
+          temp=0.5*alimiter(dl,dr)
+          KTir(i,j)  =KT(i,j)-temp
+          KTil(i+1,j)=KT(i,j)+temp
       
           dr=(KTjl(i,j+1)-  KT(i,j))*2.
           dl=(KT(i,j)    -KTjr(i,j))*2.
-      
-          KTjr(i,j)  =KT(i,j)-0.5*alimiter(dl,dr)
-          KTjl(i,j+1)=KT(i,j)+0.5*alimiter(dr,dl)
+          temp=0.5*alimiter(dl,dr)
+          KTjr(i,j)  =KT(i,j)-temp
+          KTjl(i,j+1)=KT(i,j)+temp
       
       
           !limiting OmegaT
       
           dr=(OmegaTil(i+1,j)-  OmegaT(i,j))*2.
           dl=(OmegaT(i,j)    -OmegaTir(i,j))*2.
-      
-          OmegaTir(i,j)  =OmegaT(i,j)-0.5*alimiter(dl,dr)
-          OmegaTil(i+1,j)=OmegaT(i,j)+0.5*alimiter(dr,dl)
+          temp=0.5*alimiter(dl,dr)
+          OmegaTir(i,j)  =OmegaT(i,j)-temp
+          OmegaTil(i+1,j)=OmegaT(i,j)+temp
       
           dr=(OmegaTjl(i,j+1)-  OmegaT(i,j))*2.
           dl=(OmegaT(i,j)    -OmegaTjr(i,j))*2.
-      
-          OmegaTjr(i,j)  =OmegaT(i,j)-0.5*alimiter(dl,dr)
-          OmegaTjl(i,j+1)=OmegaT(i,j)+0.5*alimiter(dr,dl)
+          temp=0.5*alimiter(dl,dr)
+          OmegaTjr(i,j)  =OmegaT(i,j)-temp
+          OmegaTjl(i,j+1)=OmegaT(i,j)+temp
        end do
       end do
          
@@ -89,6 +91,8 @@ contains
       
       
 end subroutine  SST_Reconstruct_MUSCL     
+
+
 
 subroutine SST_Flux_Lax
 use main
@@ -123,8 +127,8 @@ real*8 :: dKT,dOmegaT
       OmegaTl=max(OmegaTil(i,j),EPSILON)
       OmegaTr=max(OmegaTir(i,j),EPSILON)
       
-      rl=max(ril(i,j),EPSILON)
-      rr=max(rir(i,j),EPSILON)
+      !rl=max(ril(i,j),EPSILON)
+      !rr=max(rir(i,j),EPSILON)
      
 !     surface area vectors
 !
@@ -140,8 +144,8 @@ real*8 :: dKT,dOmegaT
     
 !     flux terms
 !
-      dKT       =-0.5*(uln*KTl*rl       +urn*rr*KTr     -eigenT*(rr*KTr-rl*KTl))
-      dOmegaT   =-0.5*(uln*OmegaTl*rl   +urn*rr*OmegaTr -eigenT*(rr*OmegaTr-rl*OmegaTl))
+      dKT       =-0.5*(uln*KTl       +urn*KTr     -eigenT*(KTr-KTl))
+      dOmegaT   =-0.5*(uln*OmegaTl   +urn*OmegaTr -eigenT*(OmegaTr-OmegaTl))
       
      
       F_KT(i,j)=F_KT(i,j)-dKT
@@ -173,8 +177,8 @@ real*8 :: dKT,dOmegaT
       OmegaTl=max(OmegaTjl(i,j),EPSILON)
       OmegaTr=max(OmegaTjr(i,j),EPSILON)
       
-      rl=max(rjl(i,j),EPSILON)
-      rr=max(rjr(i,j),EPSILON)
+      !rl=max(rjl(i,j),EPSILON)
+      !rr=max(rjr(i,j),EPSILON)
      
 !     surface area vectors
 !
@@ -188,8 +192,8 @@ real*8 :: dKT,dOmegaT
     
 !     flux terms
 !
-      dKT       =-0.5*(uln*KTl*rl       +urn*rr*KTr     -eigenT*(rr*KTr-rl*KTl))
-      dOmegaT   =-0.5*(uln*OmegaTl*rl   +urn*rr*OmegaTr -eigenT*(rr*OmegaTr-rl*OmegaTl))
+      dKT       =-0.5*(uln*KTl       +urn*KTr     -eigenT*(KTr-KTl))
+      dOmegaT   =-0.5*(uln*OmegaTl   +urn*OmegaTr -eigenT*(OmegaTr-OmegaTl))
       
      
       F_KT(i,j)=F_KT(i,j)-dKT
@@ -201,7 +205,6 @@ real*8 :: dKT,dOmegaT
       end do
       end do     
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      return
 end subroutine SST_Flux_Lax
 
 subroutine SST_RHS
@@ -244,10 +247,10 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
       OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
       
-      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
+      CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
       &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
-      G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
-      G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
+      G1=500.0*MuL_/dist_**2/OmegaT_
+      G2=4.0*sigmaO2*KT_/dist_**2/CD_KO
       G3=sqrt(KT_)/Cmu/OmegaT_/dist_
       G=min(max(G1,G3),G2)
       F1=tanh(G**4)
@@ -262,7 +265,7 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       KT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaK)*&
       &(sav1*dx_i(KT,i,j)+sav2*dy_i(KT,i,j))
       OmegaT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaO)*&
-      &(sav1*dx_i(KT,i,j)+sav2*dy_i(KT,i,j))
+      &(sav1*dx_i(OmegaT,i,j)+sav2*dy_i(OmegaT,i,j))
       
       F_KT(i,j)=F_KT(i,j)-KT_Df
       F_OmegaT(i,j)=F_OmegaT(i,j)-OmegaT_Df
@@ -283,10 +286,10 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
       OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
       
-      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
-      &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
-      G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
-      G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
+      CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
+      &(dx_j(KT,i,j)*dx_j(OmegaT,i,j)+dy_j(KT,i,j)*dy_j(OmegaT,i,j)))!!!!
+      G1=500.0*MuL_/dist_**2/OmegaT_
+      G2=4.0*sigmaO2*KT_/dist_**2/CD_KO
       G3=sqrt(KT_)/Cmu/OmegaT_/dist_
       G=min(max(G1,G3),G2)
       F1=tanh(G**4)
@@ -330,10 +333,11 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       beta  =F1*beta1+(1.0-F1)*beta2
       gmt   =F1*gmt1+(1.0-F1)*gmt2 
       ! cell volume should be coupled in the source item
-      KT_Sp=(MuT_*Vort(i,j)**2)*Vol
       KT_Sd=(-beta*KT_*OmegaT_)*Vol
+      KT_Sp=min(MuT_*SSM2(i,j)*Vol,-ProductLimit*KT_Sd)
       
-      OmegaT_Sp=(gmt*Vort(i,j)**2)*Vol
+      
+      OmegaT_Sp=gmt*SSM2(i,j)*Vol
       OmegaT_Sd=(-beta*OmegaT_**2+2.0*(1-F1)*sigmaO2*dKdO(i,j)/OmegaT_)*Vol !cross item
       
       
@@ -405,11 +409,11 @@ use main
       
       Vn=SDx*Vx_g+SDy*Vy_g
       
-      dKTm     =F_KT(i-1,j)
-      dOmegaTm   =F_OmegaT(i-1,j)
+      dKTm      =F_KT(i-1,j)
+      dOmegaTm  =F_OmegaT(i-1,j)
       
-      dKTI     =0.5*(Vn*dKTm     +radius_i(i-1,j)*dKTm)
-      dOmegaTI   =0.5*(VN*dOmegaTm   +radius_i(i-1,j)*dOmegaTm)
+      dKTI      =0.5*(Vn*dKTm     +radius_i(i-1,j)*dKTm)
+      dOmegaTI  =0.5*(Vn*dOmegaTm   +radius_i(i-1,j)*dOmegaTm)
       
      ! J direction
       SDx=0.5*(Sn_X_j(i,j)+Sn_X_j(i,j-1))
@@ -486,11 +490,12 @@ use main
       end do
       end do 
       
-      do j=jb,jm
-      do i=ib,im
+      do j=jb,jm-1
+      do i=ib,im-1
       
       KT(i,j)       =KT(i,j)   +F_KT(i,j)
       OmegaT(i,j)   =OmegaT(i,j)+F_OmegaT(i,j)
+     
       
       end do
       end do

@@ -14,7 +14,7 @@
       
       i=ib-1
      
-      do j=jb-1,jm-1
+      do j=jb-1,jm
   
       rho(i,j)=rho_inlet
       vx(i,j)=Vx_inlet
@@ -51,8 +51,9 @@
       KT(i,j)=2.*KT(i-1,j)-KT(i-2,j)
       OmegaT(i,j)=2.*OmegaT(i-1,j)-OmegaT(i-2,j)
       
-      Mu_E(i,j)=2.*Mu_E(i-1,j)-Mu_E(i-2,j)
+      Mu_T(i,j)=2.*Mu_T(i-1,j)-Mu_T(i-2,j)
       Mu_L(i,j)=2.*Mu_L(i-1,j)-Mu_L(i-2,j)
+      Mu_E(i,j)=2.*Mu_E(i-1,j)-Mu_E(i-2,j)
  ! L_Cell_x(i,j)=L_Cell_x(i-1,j)
       !p(i,j)=p(i-1,j)
       !T(i,j)=T(i-1,j)
@@ -85,7 +86,7 @@
       p(i,j-1)=p(i,j)
       rho(i,j-1)=rho(i,j)
       !turbulence BC
-      KT(i,j-1)=-KT(i,j)
+      KT(i,j-1)=0.0
       OmegaT(i,j-1)=2.0*60*Mu_E(i,j)/rho(i,j)/0.83/(DistW(i,j)**2)-OmegaT(i,j)
       
       Mu_E(i,j-1)=Mu_E(i,j)
@@ -112,14 +113,16 @@
       do i=ib,im-1
       
       
-      vx(i,j+1)=2.0*vx(i,j)-vx(i,j-1)
-      vy(i,j+1)=2.0*vy(i,j)-vy(i,j-1)
-      p(i,j+1)=2.0*p(i,j)-p(i,j-1)
-      rho(i,j+1)=2.0*rho(i,j)-rho(i,j-1)
-      Mu_E(i,j+1)=2.0*Mu_E(i,j)-Mu_E(i,j-1)
-      Mu_L(i,j+1)=2.0*Mu_L(i,j)-Mu_L(i,j-1)
-      T(i,j+1)=2.0*T(i,j)-T(i,j-1)
+      vx(i,j)=2.0*vx(i,j-1)-vx(i,j-2)
+      vy(i,j)=2.0*vy(i,j-1)-vy(i,j-2)
+      p(i,j)=2.0*p(i,j-1)-p(i,j-2)
+      rho(i,j)=2.0*rho(i,j-1)-rho(i,j-2)
+      Mu_E(i,j)=2.0*Mu_E(i,j-1)-Mu_E(i,j-2)
+      Mu_L(i,j)=2.0*Mu_L(i,j-1)-Mu_L(i,j-2)
+      T(i,j)=2.0*T(i,j-1)-T(i,j-2)
       
+      KT(i,j)=2.0*KT_inlet-KT(i,j-1)
+      OmegaT(i,j)=2.0*OmegaT_inlet-OmegaT(i,j-1)
       end do
        
       return
@@ -162,6 +165,7 @@
        vir(i,j)=vil(i,j)
        pir(i,j)=pil(i,j)
        rir(i,j)=ril(i,j)
+       
        KTir(i,j)=KTil(i,j)
        OmegaTir(i,j)=OmegaTil(i,j)
       
@@ -186,32 +190,35 @@
       !rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
       rjr(i,j)=rjl(i,j)
       KTjr(i,j)=0.0
-      OmegaTjr(i,j)=60*Mu_L(i,j)/beta1/(DistW(i,j)**2)
+      KTjl(i,j)=0.0
+      OmegaTjr(i,j)=60*Mu_L(i,j)/Rho(i,j)/beta1/(DistW(i,j)**2)
+      OmegaTjl(i,j)=OmegaTjr(i,j)
       else
       ujl(i,j)=0.5*(vx(i,j)+vx(i,j-1))
       vjl(i,j)=0.5*(vy(i,j)+vy(i,j-1))
       pjl(i,j)=0.5*(p(i,j)+p(i,j-1))
       rjl(i,j)=0.5*(rho(i,j)+rho(i,j-1))
-      KTjl(i,j)=0.5*(KT(i,j)+KT(i,j-1))
-      OmegaTjl(i,j)=0.5*(OmegaT(i,j)+OmegaT(i,j-1))
+      KTjl(i,j)=KT_inlet
+      OmegaTjl(i,j)=OmegaT_inlet
       end if
       
       end do
       
-      j=jm
+      
       
 ! upper boundary 
-      
+      j=jm
       do i=ib,im-1
       
-      ujr(i,j)=0.5*(vx(i,j)+vx(i,j+1))
-      vjr(i,j)=0.5*(vy(i,j)+vy(i,j+1))
-      pjr(i,j)=0.5*(p(i,j)+p(i,j+1))
-      rjr(i,j)=0.5*(rho(i,j)+rho(i,j+1))
+      ujr(i,j)=0.5*(vx(i,j)+vx(i,j-1))
+      vjr(i,j)=0.5*(vy(i,j)+vy(i,j-1))
+      pjr(i,j)=0.5*(p(i,j)+p(i,j-1))
+      rjr(i,j)=0.5*(rho(i,j)+rho(i,j-1))
       
-      KTjr(i,j)=0.5*(KT(i,j)+KT(i,j+1))
-      OmegaTjr(i,j)=0.5*(OmegaT(i,j)+OmegaT(i,j+1))
-      
+      !KTjr(i,j)=0.5*(KT(i,j)+KT(i,j-1))
+      !OmegaTjr(i,j)=0.5*(OmegaT(i,j)+OmegaT(i,j-1))
+      KTjr(i,j)=KT_inlet
+      OmegaTjr(i,j)=OmegaT_inlet
       end do
 
       return

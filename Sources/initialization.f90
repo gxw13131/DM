@@ -214,8 +214,8 @@
                     Mu_E(i,j)=Mu_inlet
                     T(i,j)=T_inlet
                 ! initialize turbulence variables
-                    KT(i,j)=KT_inlet
-                    OmegaT(i,j)=OmegaT_inlet
+                    KT(i,j)=KT_inlet*Rho_inlet
+                    OmegaT(i,j)=OmegaT_inlet*Rho_inlet
 
       end do
       end do
@@ -235,11 +235,15 @@
       Rho_Et_m1 (i,j)=rho_Et(i,j)
       Rho_vx_m1(i,j)=rho_vx(i,j)
       Rho_vy_m1(i,j)=rho_vy(i,j)
+      KT_m1(i,j)=KT(i,j)
+      OmegaT_m1(i,j)=OmegaT(i,j)
       
       Rho_m2(i,j)=rho(i,j)
       Rho_Et_m2(i,j)=rho_Et(i,j)
       Rho_vx_m2(i,j)=rho_vx(i,j)
       Rho_vy_m2(i,j)=rho_vy(i,j)
+      KT_m2(i,j)=KT(i,j)
+      OmegaT_m2(i,j)=OmegaT(i,j)
       end do
       end do
            

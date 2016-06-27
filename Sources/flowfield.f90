@@ -1069,7 +1069,8 @@ contains
       subroutine update_variables
 !     ===========================
 
-      use main                
+      use main 
+      use ConstTurbulence
       real*8 ::TT,Vsrh,RhoInv,VolInv
 
 !
@@ -1096,8 +1097,13 @@ contains
       TT=T(i,j)*T_ref
       Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
       
-      !Mu_T(i,j)=min(rho(i,j)*KT(i,j)/OmegaT(i,j),3*Mu_L(i,j))
-      Mu_T(i,j)=10*Mu_L(i,j)
+      !   Limiting KT OmegaT
+       OmegaT(i,j)=max(OmegaT(i,j),(rho(i,j)*SSM2(i,j)/ProductLimit/beta_)**0.5)
+       KT(i,j)=min(KT(i,j),1.0E5*Mu_L(i,j)*OmegaT(i,j)/Rho(i,j))
+      
+      
+      Mu_T(i,j)=rho(i,j)*KT(i,j)/OmegaT(i,j)
+      !Mu_T(i,j)=100*Mu_L(i,j)
       Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
       end do
       end do

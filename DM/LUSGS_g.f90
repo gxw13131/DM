@@ -5,7 +5,7 @@ subroutine LUSGS()
       
       real*8 :: dt_physics=1E30  !physics time step
       real*8 :: Ng(iq,jq),dt(iq,jq),beta(iq,jq)
-      real*8 :: temp(i,j)
+      real*8 :: temp
       real*8 :: AdRho,AdRhoVx,AdRhoVy,AdRhoEt 
       real*8 :: dRhoI,dRhoVxI,dRhoVyI,dRhoEtI
       real*8 :: dRhoJ,dRhoVxJ,dRhoVyJ,dRhoEtJ
@@ -40,22 +40,22 @@ subroutine LUSGS()
       ! boundary DU=0
       j=jb
       do i=ib,im-1
-      temp(i,j)=beta(i,j)/Ng(i,j)
+      temp=beta(i,j)/Ng(i,j)
       
-      F_Rho(i,j)    =F_Rho(i,j)    *temp(i,j)
-      F_Rho_vx(i,j) =F_Rho_vx(i,j) *temp(i,j)
-      F_Rho_vy(i,j) =F_Rho_vy(i,j) *temp(i,j)
-      F_Rho_Et(i,j) =F_Rho_Et(i,j) *temp(i,j)
+      F_Rho(i,j)    =F_Rho(i,j)    *temp
+      F_Rho_vx(i,j) =F_Rho_vx(i,j) *temp
+      F_Rho_vy(i,j) =F_Rho_vy(i,j) *temp
+      F_Rho_Et(i,j) =F_Rho_Et(i,j) *temp
       end do
       
       i=ib
       do j=jb,jm-1
-      temp(i,j)=beta(i,j)/Ng(i,j)
+      temp=beta(i,j)/Ng(i,j)
       
-      F_Rho(i,j)    =F_Rho(i,j)    *temp(i,j)
-      F_Rho_vx(i,j) =F_Rho_vx(i,j) *temp(i,j)
-      F_Rho_vy(i,j) =F_Rho_vy(i,j) *temp(i,j)
-      F_Rho_Et(i,j) =F_Rho_Et(i,j) *temp(i,j)
+      F_Rho(i,j)    =F_Rho(i,j)    *temp
+      F_Rho_vx(i,j) =F_Rho_vx(i,j) *temp
+      F_Rho_vy(i,j) =F_Rho_vy(i,j) *temp
+      F_Rho_Et(i,j) =F_Rho_Et(i,j) *temp
       end do
       
       
@@ -102,12 +102,12 @@ subroutine LUSGS()
       dRhoVyJ   =0.5*(AdRhoVy   +radius_j(i,j-1)*dRhoVyM)
       dRhoEtJ   =0.5*(AdRhoEt   +radius_j(i,j-1)*dRhoEtM)
      
-      temp(i,j)=beta(i,j)/Ng(i,j)
+      temp=beta(i,j)/Ng(i,j)
       
-      F_Rho(i,j)    =(F_Rho(i,j)    +(dRhoI+dRhoJ)      )*temp(i,j)
-      F_Rho_vx(i,j) =(F_Rho_vx(i,j) +(dRhoVxI+dRhoVxJ)  )*temp(i,j)
-      F_Rho_vy(i,j) =(F_Rho_vy(i,j) +(dRhoVyI+dRhoVyJ)  )*temp(i,j)
-      F_Rho_Et(i,j) =(F_Rho_Et(i,j) +(dRhoEtI+dRhoEtJ)  )*temp(i,j)
+      F_Rho(i,j)    =(F_Rho(i,j)    +(dRhoI+dRhoJ)      )*temp
+      F_Rho_vx(i,j) =(F_Rho_vx(i,j) +(dRhoVxI+dRhoVxJ)  )*temp
+      F_Rho_vy(i,j) =(F_Rho_vy(i,j) +(dRhoVyI+dRhoVyJ)  )*temp
+      F_Rho_Et(i,j) =(F_Rho_Et(i,j) +(dRhoEtI+dRhoEtJ)  )*temp
       end do
       end do
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -171,12 +171,12 @@ subroutine LUSGS()
       
       !j direction
       
-      temp(i,j)=beta(i,j)/Ng(i,j)
+      temp=beta(i,j)/Ng(i,j)
       
-      F_Rho(i,j)    =F_Rho(i,j)    -(dRhoI+dRhoJ)      *temp(i,j)
-      F_Rho_vx(i,j) =F_Rho_vx(i,j) -(dRhoVxI+dRhoVxJ)  *temp(i,j)
-      F_Rho_vy(i,j) =F_Rho_vy(i,j) -(dRhoVyI+dRhoVyJ)  *temp(i,j)
-      F_Rho_Et(i,j) =F_Rho_Et(i,j) -(dRhoEtI+dRhoEtJ)  *temp(i,j)
+      F_Rho(i,j)    =F_Rho(i,j)    -(dRhoI+dRhoJ)      *temp
+      F_Rho_vx(i,j) =F_Rho_vx(i,j) -(dRhoVxI+dRhoVxJ)  *temp
+      F_Rho_vy(i,j) =F_Rho_vy(i,j) -(dRhoVyI+dRhoVyJ)  *temp
+      F_Rho_Et(i,j) =F_Rho_Et(i,j) -(dRhoEtI+dRhoEtJ)  *temp
       
       end do
       end do 

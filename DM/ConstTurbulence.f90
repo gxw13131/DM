@@ -13,5 +13,5 @@ real*8 :: kappa=0.41
 real*8 :: a1=0.31
 real*8 :: gmt1=0.5532   !beta1/Cmu-kappa**2/sigmaO1/sqrt(Cmu)
 real*8 :: gmt2=0.4404   !beta2/Cmu-kappa**2/sigmaO2/sqrt(Cmu)
-  
+real*8 :: ProductLimit=20.0  
 end module ConstTurbulence
