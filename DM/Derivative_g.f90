@@ -16,7 +16,7 @@ subroutine Derivative2rd
       dOmegaTdx=dx(OmegaTir,OmegaTil,OmegaTjr,OmegaTjl,i,j)
       dOmegaTdy=dy(OmegaTir,OmegaTil,OmegaTjr,OmegaTjl,i,j)
       SSM2(i,j)=dudx**2+dvdy**2+0.5*(dudy+dvdx)**2
-      Vort(i,j)=0.25*(dudy-dvdx)**2
+      Vort2(i,j)=0.25*(dudy-dvdx)**2
       dKdO(i,j)=dKTdx*dOmegaTdx+dKTdy*dOmegaTdy
       DIV(i,j)=dudx+dvdy
       end do

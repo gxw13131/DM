@@ -7,7 +7,7 @@ subroutine SST_Reconstruct_MUSCL
 !----------------------------------------------------------------------
 ! linear interpolate the turbulence variables (k/w) to cell interfaces
       
-      ! iface
+      ! i face
      
       do j=jb,jm-1
       do i=ib,im
@@ -224,14 +224,14 @@ real*8 :: sigmaK,sigmaO,beta,gmt
 !temp variables
 
 real*8 :: G,G1,G2,G3
-real*8 :: F1,F2
+real*8 :: F1 !F2 is defined in main module
 real*8 :: CD_KO
 real*8 :: sav1,sav2,Vol
 ! distance weight
 real*8 :: CL,CR,alsinv
 real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
 
-      do j=jb,jm-1
+      do j=jb,jm
       do i=ib,im
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !             DIFFUSION ITEM
@@ -241,11 +241,14 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       CL=L_Cell_x(i,j)*alsinv
       CR=L_Cell_x(i-1,j)*alsinv
       
-      Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
+      !Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i-1,j)+CR*Mu_L(i,j)
       dist_=CL*distW(i-1,j)+CR*distW(i,j)
-      KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
-      OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
+      !KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
+      !OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
+      Rho_  =rir(i,j)
+      KT_   =KTir(i,j)
+      OmegaT_=OmegaTir(i,j)
       
       CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
       &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
@@ -280,11 +283,14 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       CL=L_Cell_y(i,j)*alsinv
       CR=L_Cell_y(i,j-1)*alsinv
       
-      Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
+      !Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i,j-1)+CR*Mu_L(i,j)
       dist_=CL*distW(i,j-1)+CR*distW(i,j)
-      KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
-      OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
+      !KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
+      !OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
+      Rho_  =rjr(i,j)
+      KT_   =KTjr(i,j)
+      OmegaT_=OmegaTjr(i,j)
       
       CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
       &(dx_j(KT,i,j)*dx_j(OmegaT,i,j)+dy_j(KT,i,j)*dy_j(OmegaT,i,j)))!!!!
@@ -322,23 +328,24 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       KT_  =KT(i,j)/Rho(i,j)
       OmegaT_=OmegaT(i,j)/Rho(i,j)
       
-      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*&
-      &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
+      CD_KO=max(1e-20,2.0*Rho_*sigmaO2/OmegaT_*dKdO(i,j))
       G1=500.0*MuL_/Rho_/dist_**2/OmegaT_
       G2=4.0*sigmaO2*Rho_*KT_/dist_**2/CD_KO
       G3=sqrt(KT_)/Cmu/OmegaT_/dist_
       G=min(max(G1,G3),G2)
       F1=tanh(G**4)
+      ! F2 will be used in computation of mu_t
+      F2(i,j)=tanh(max(2*G3,G1))
       
       beta  =F1*beta1+(1.0-F1)*beta2
       gmt   =F1*gmt1+(1.0-F1)*gmt2 
       ! cell volume should be coupled in the source item
-      KT_Sd=(-beta*KT_*OmegaT_)*Vol
-      KT_Sp=min(MuT_*SSM2(i,j)*Vol,-ProductLimit*KT_Sd)
+      KT_Sd=(-beta*KT_*OmegaT_*Rho_)*Vol
+      KT_Sp=min(MuT_*Vort2(i,j)*Vol,-ProductLimit*KT_Sd)
       
       
-      OmegaT_Sp=gmt*SSM2(i,j)*Vol
-      OmegaT_Sd=(-beta*OmegaT_**2+2.0*(1-F1)*sigmaO2*dKdO(i,j)/OmegaT_)*Vol !cross item
+      OmegaT_Sp=(gmt*KT_Sp*Rho_/MuT_)*Vol
+      OmegaT_Sd=(-beta*Rho_*OmegaT_**2+2.0*(1-F1)*Rho_*sigmaO2*dKdO(i,j)/OmegaT_)*Vol !cross item
       
       
       F_KT(i,j)=F_KT(i,j)+KT_Sp+KT_Sd
@@ -378,7 +385,7 @@ use main
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !   LOWER 
       
-      ! boundary DU=0
+      ! boundary dKT=dOmegaT=0
       j=jb
       do i=ib,im-1
       temp=beta(i,j)/Ng(i,j)

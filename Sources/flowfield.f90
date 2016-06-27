@@ -1089,20 +1089,19 @@ contains
       vy(i,j)=rho_vy(i,j)*RhoInv
       
       
-      vsrh=.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
-      p(i,j)=max(0.0,Gamma1*(rho_Et(i,j)-vsrh*rho(i,j)))
+      vsrh=0.5*(vx(i,j)*vx(i,j)+vy(i,j)*vy(i,j))
+      p(i,j)=max(1.0E-5,Gamma1*(rho_Et(i,j)-vsrh*rho(i,j)))
       Ht(i,j)=Gamma*(rho_Et(i,j)/rho(i,j)-vsrh)+vsrh
       T(i,j)=p(i,j)*RhoInv/R_air
 !
       TT=T(i,j)*T_ref
       Mu_L(i,j)=1.458d-6*abs(TT)**1.5/(TT+110.4)/(Rho_ref*V_ref*L_ref)
       
-      !   Limiting KT OmegaT
-       OmegaT(i,j)=max(OmegaT(i,j),(rho(i,j)*SSM2(i,j)/ProductLimit/beta_)**0.5)
+      !   Limiting KT OmegaT to guarantee mu_T <= 1e5*mu_L
+       
        KT(i,j)=min(KT(i,j),1.0E5*Mu_L(i,j)*OmegaT(i,j)/Rho(i,j))
-      
-      
-      Mu_T(i,j)=rho(i,j)*KT(i,j)/OmegaT(i,j)
+           
+      Mu_T(i,j)=rho(i,j)*KT(i,j)/max(OmegaT(i,j),sqrt(2.0*SSM2(i,j))*F2(i,j))
       !Mu_T(i,j)=100*Mu_L(i,j)
       Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
       end do

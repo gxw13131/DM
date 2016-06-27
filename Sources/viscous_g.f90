@@ -26,6 +26,7 @@ subroutine viscous_Flux
       sav2=Sn_Y_i(i,j) !dx
 !
       k_Fourier=0.5*(Mu_L(i,j)+Mu_L(i-1,j))*cp/Pr_L+0.5*(Mu_T(i,j)+Mu_T(i-1,j))*cp/Pr_T
+      !k_Fourier=Mu_L(i,j)*cp/Pr_L+Mu_T(i,j)*cp/Pr_T
       
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2
@@ -69,6 +70,7 @@ subroutine viscous_Flux
       
       
       k_Fourier=0.5*(Mu_L(i,j)+Mu_L(i,j-1))*cp/Pr_L+0.5*(Mu_T(i,j)+Mu_T(i,j-1))*cp/Pr_T
+      !k_Fourier=Mu_L(i,j)*cp/Pr_L+Mu_T(i,j)*cp/Pr_T
       
       LFlux_rho_vx=Tau_xx*sav1+Tau_xy*sav2
       LFlux_rho_vy=Tau_xy*sav1+Tau_yy*sav2

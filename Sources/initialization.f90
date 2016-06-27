@@ -39,7 +39,7 @@
       Gamma=1.4
       Pr_L=0.72
       Pr_E=Pr_L
-      Pr_T=Pr_L
+      Pr_T=0.9
       
 
 

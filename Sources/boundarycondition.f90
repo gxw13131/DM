@@ -22,6 +22,7 @@
       p(i,j)=p_inlet
       T(i,j)=T_inlet
       Mu_L(i,j)=Mu_inlet
+      Mu_T(i,j)=rho_inlet*KT_inlet/OmegaT_inlet
       Mu_E(i,j)=Mu_L(i,j)
       !turbulence BC
       KT(i,j)=KT_inlet
@@ -90,6 +91,7 @@
       OmegaT(i,j-1)=2.0*60*Mu_E(i,j)/rho(i,j)/0.83/(DistW(i,j)**2)-OmegaT(i,j)
       
       Mu_E(i,j-1)=Mu_E(i,j)
+      Mu_T(i,j-1)=Mu_T(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
       T(i,j-1)=T(i,j) !adiabatic wall
       !T(i,j-1)=2.0*T_inlet-T(i,j) !isothermal wall
@@ -103,6 +105,7 @@
       KT(i,j-1)=KT(i,j)
       OmegaT(i,j-1)=OmegaT(i,j)
       Mu_E(i,j-1)=Mu_E(i,j)
+      Mu_T(i,j-1)=Mu_T(i,j)
       Mu_L(i,j-1)=Mu_L(i,j)
       T(i,j-1)=T(i,j)
       end if
@@ -117,9 +120,12 @@
       vy(i,j)=2.0*vy(i,j-1)-vy(i,j-2)
       p(i,j)=2.0*p(i,j-1)-p(i,j-2)
       rho(i,j)=2.0*rho(i,j-1)-rho(i,j-2)
+      T(i,j)=2.0*T(i,j-1)-T(i,j-2)
+      
       Mu_E(i,j)=2.0*Mu_E(i,j-1)-Mu_E(i,j-2)
       Mu_L(i,j)=2.0*Mu_L(i,j-1)-Mu_L(i,j-2)
-      T(i,j)=2.0*T(i,j-1)-T(i,j-2)
+      Mu_T(i,j)=2.0*Mu_T(i,j-1)-Mu_T(i,j-2)
+      
       
       KT(i,j)=2.0*KT_inlet-KT(i,j-1)
       OmegaT(i,j)=2.0*OmegaT_inlet-OmegaT(i,j-1)

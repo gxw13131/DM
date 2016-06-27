@@ -66,7 +66,7 @@
      !  turbulence variables
      REAL*8 :: KT(iq,jq),OmegaT(iq,jq) ! turbulent kinetic energy,Omega
      !  VORTICITY AND SHEAR STRAIN
-     REAL*8 :: Vort(iq,jq),SSM2(iq,jq),DIV(iq,jq),dKdO(iq,jq)
+     REAL*8 :: Vort2(iq,jq),SSM2(iq,jq),DIV(iq,jq),dKdO(iq,jq)
      REAL*8 :: DistW(iq,jq) !distance to the nearest wall
      ! primitive variables
      REAL*8 :: p(iq,jq),T(iq,jq),vx(iq,jq),vy(iq,jq),Ht(iq,jq)
@@ -81,6 +81,7 @@
      ! TURBULENCE PRODUCTION AND DISSIPATION ITEM
      REAL*8 :: SPk(iq,jq),SDk(iq,jq)
      REAL*8 :: SPomega(iq,jq),SDomega(iq,jq)
+     real*8 :: F2(iq,jq)
      
      ! LAST STEP SOLUTION
      REAL*8 :: &
