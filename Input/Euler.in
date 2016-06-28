@@ -1,5 +1,10 @@
-  10000  0 1000
-  .false.
-  0 0
-  0.2
-  
+nmax   = 1000
+is_restart = 0
+ipint = 100
+steady1 = .false.
+icgl = 0
+cfl =0.3
+!!!!!!!!!!!!!!!!!!!!!!!!!!!
+irsolver = 0
+iTimeMarch =0
+iReconstruct =0

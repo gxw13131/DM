@@ -8,28 +8,32 @@
       real*8 :: Xcar,Ycar
       real*8 :: e,TT,KE
       real*8 :: temp
-      open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',status='unknown')
+      integer :: IO_STATUS
+      
+      namelist /step_/ nmax,is_restart,iprint,steady1
+      nmax=1000     !         nmax:  maximum advancing steps;
+      is_restart=0  !         is_restart: start from very beginning(0)                      or start from a previous computation(1);
+      iprint=100    !         iprint: output every iprint steps
+      steady1=.false.       !         steady1: logical variable, 
+                            !.false. the flow is unsteady
+      icgl=0        !         icgl=1: gloal time step; =0 local time step
+      cfl=0.3   ! CFL number
+      namelist /solver_/ irsolver,iTimeMarch,iReconstruct
+      irsolver=0 ! Roe
+      iTimeMarch=0 ! LUSGS
+      iReconstruct=0 ! MUSCL
+      open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',mode='READ',status='unknown')
 !
 !     read in main integer/logical control variables
 !     ----------------------------------------------
 !
-      read(4,*) nmax,is_restart,iprint 
-!         nmax:  maximum advancing steps;
-!         is_restart: start from very beginning(0) or start from a previous computation(1);
-!         iprint: output every iprint steps
-!
-
-      read(4,*) steady1
-!         steady1: logical variable, ==.true. compute steady flow; ==.false. the flow is unsteady
-
-      read(4,*) icgl, irsolver  
-!         icgl=1: gloal time step; =0 local time step
-!         irsolver=0 Roe; =1 Lax -riemann solver
-!     read constants and CFL number 
-      read(4,*) cfl
+      read(4,NML=step_,IOSTAT=IO_STATUS) 
+      read(4,NML=solver_,IOSTAT=IO_STATUS) 
+      
 !         cfl: cfl number
 !     ------------------------------
 
+       close(4)
       
       !read(4,*) cp,Gamma,Pr_L
 !         cp: specfic heat at constant pressure
@@ -61,8 +65,7 @@
       Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
       P_out=0.0
       !===============================
-!
-      close(4)
+
 !===========end of the input file bl.in=========================
 !
 !     read grids 

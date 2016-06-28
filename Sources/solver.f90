@@ -37,7 +37,7 @@
 
       call pSolver
 !!!! TURBULENCE update k and Omega
-      call SST_LUSGS        !T
+!      call SST_LUSGS        !T
      
 !     update all variables
       call update_variables
