@@ -11,13 +11,13 @@
       integer :: IO_STATUS
       
       namelist /step_/ nmax,is_restart,iprint,steady1
-      nmax=1000     !         nmax:  maximum advancing steps;
+      nmax=30000     !         nmax:  maximum advancing steps;
       is_restart=0  !         is_restart: start from very beginning(0)                      or start from a previous computation(1);
-      iprint=100    !         iprint: output every iprint steps
+      iprint=3 000    !         iprint: output every iprint steps
       steady1=.false.       !         steady1: logical variable, 
                             !.false. the flow is unsteady
       icgl=0        !         icgl=1: gloal time step; =0 local time step
-      cfl=0.3   ! CFL number
+      cfl=0.1   ! CFL number
       namelist /solver_/ irsolver,iTimeMarch,iReconstruct
       irsolver=0 ! Roe
       iTimeMarch=0 ! LUSGS
@@ -30,9 +30,6 @@
       read(4,NML=step_,IOSTAT=IO_STATUS) 
       read(4,NML=solver_,IOSTAT=IO_STATUS) 
       
-!         cfl: cfl number
-!     ------------------------------
-
        close(4)
       
       !read(4,*) cp,Gamma,Pr_L
@@ -42,7 +39,6 @@
       R_air=287.0
       Gamma=1.4
       Pr_L=0.72
-      Pr_E=Pr_L
       Pr_T=0.9
       
 
@@ -213,13 +209,14 @@
                    vx(i,j)=Vx_inlet
                    vy(i,j)=Vy_inlet
                     p(i,j)=p_inlet
-                    Mu_L(i,j)=Mu_inlet
-                    Mu_E(i,j)=Mu_inlet
+                    
                     T(i,j)=T_inlet
                 ! initialize turbulence variables
                     KT(i,j)=KT_inlet*Rho_inlet
                     OmegaT(i,j)=OmegaT_inlet*Rho_inlet
-
+                    Mu_L(i,j)=Mu_inlet
+                    Mu_T(i,j)=rho_inlet*KT_inlet/OmegaT_inlet
+                    Mu_E(i,j)=Mu_T(i,j)+Mu_L(i,j)
       end do
       end do
       

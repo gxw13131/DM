@@ -8,12 +8,12 @@
     integer :: ii
       do j=jb,jm-1
       do i=ib,im-1
-       xx=x(i,j)
-       yy=y(i,j)
+       xx=xc(i,j)
+       yy=yc(i,j)
        distW(i,j)=1e10
            do ii=ib,im-1
            ! j=jb is set to the wall by default
-           temp=sqrt((xx-y(ii,jb))**2+(yy-y(ii,jb))**2)  
+           temp=sqrt((xx-x(ii,jb))**2+(yy-y(ii,jb))**2)  
            if (temp.lt.distW(i,j)) then
             distW(i,j)=temp
            end if
@@ -1102,7 +1102,7 @@ contains
        KT(i,j)=min(KT(i,j),1.0E5*Mu_L(i,j)*OmegaT(i,j)/Rho(i,j))
            
       Mu_T(i,j)=rho(i,j)*KT(i,j)/max(OmegaT(i,j),sqrt(2.0*SSM2(i,j))*F2(i,j))
-      !Mu_T(i,j)=100*Mu_L(i,j)
+      !Mu_T(i,j)=10*Mu_L(i,j)
       Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
       end do
       end do

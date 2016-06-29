@@ -138,7 +138,7 @@
      & KTjl(iq,jq),KTjr(iq,jq),&
      & OmegaTjl(iq,jq),OmegaTjr(iq,jq)
      
-    integer :: TimeMarch ! select time marching method 0:LUSGS; 1:RK2; 2:RK4
+    integer :: iTimeMarch ! select time marching method 0:LUSGS; 1:RK2; 2:RK4
     integer :: &
      &nmax,n,is_restart,&
      &ioup,iinp,icgl,iimplicit,idgstart&
@@ -150,7 +150,7 @@
 !     
       REAL*8 :: &
 !
-     & cp,Gamma,Gamma2,Gamma1,rcp,R_air,Gamma3,cv,Pr_L,Pr_T,Pr_E
+     & cp,Gamma,Gamma2,Gamma1,rcp,R_air,Gamma3,cv,Pr_L,Pr_T
 !     
 !
       REAL*8 :: &

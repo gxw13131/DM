@@ -1,6 +1,6 @@
-nmax   = 1000
+nmax   = 10000
 is_restart = 0
-ipint = 100
+iprint = 1000
 steady1 = .false.
 icgl = 0
 cfl =0.3

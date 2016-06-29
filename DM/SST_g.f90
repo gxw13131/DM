@@ -101,7 +101,7 @@ REAL*8 :: uln,urn ! normal velocity
 REAL*8 :: sav1,sav2
 real*8 :: eigenT ! eigen velocity of turbulence
 real*8 :: dKT,dOmegaT
-    do j=jb,jm-1
+    do j=jb,jm
     do i=ib,im 
 
     F_KT(i,j)=0.0
@@ -121,11 +121,11 @@ real*8 :: dKT,dOmegaT
       vl=vil(i,j)
       vr=vir(i,j)
      
-      KTl=max(KTil(i,j),EPSILON)
-      KTr=max(KTir(i,j),EPSILON)
+      KTl=KTil(i,j)
+      KTr=KTir(i,j)
       
-      OmegaTl=max(OmegaTil(i,j),EPSILON)
-      OmegaTr=max(OmegaTir(i,j),EPSILON)
+      OmegaTl=OmegaTil(i,j)
+      OmegaTr=OmegaTir(i,j)
       
       !rl=max(ril(i,j),EPSILON)
       !rr=max(rir(i,j),EPSILON)
@@ -171,11 +171,11 @@ real*8 :: dKT,dOmegaT
       vl=vjl(i,j)
       vr=vjr(i,j)
      
-      KTl=max(KTjl(i,j),EPSILON)
-      KTr=max(KTjr(i,j),EPSILON)
+      KTl=KTjl(i,j)
+      KTr=KTjr(i,j)
       
-      OmegaTl=max(OmegaTjl(i,j),EPSILON)
-      OmegaTr=max(OmegaTjr(i,j),EPSILON)
+      OmegaTl=OmegaTjl(i,j)
+      OmegaTr=OmegaTjr(i,j)
       
       !rl=max(rjl(i,j),EPSILON)
       !rr=max(rjr(i,j),EPSILON)
@@ -231,7 +231,7 @@ real*8 :: sav1,sav2,Vol
 real*8 :: CL,CR,alsinv
 real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpolated
 
-      do j=jb,jm
+      do j=jb,jm-1
       do i=ib,im
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !             DIFFUSION ITEM
@@ -241,14 +241,15 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       CL=L_Cell_x(i,j)*alsinv
       CR=L_Cell_x(i-1,j)*alsinv
       
-      !Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
+      Rho_ =CL*rho(i-1,j)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i-1,j)+CR*Mu_L(i,j)
-      dist_=CL*distW(i-1,j)+CR*distW(i,j)
-      !KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
-      !OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
-      Rho_  =rir(i,j)
-      KT_   =KTir(i,j)
-      OmegaT_=OmegaTir(i,j)
+      !dist_=CL*distW(i-1,j)+CR*distW(i,j)
+      dist_=distW(i,j)
+      KT_  =CL*KT(i-1,j)/Rho(i-1,j)+CR*KT(i,j)/Rho(i,j)
+      OmegaT_= CL*OmegaT(i-1,j)/Rho(i-1,j)+CR*OmegaT(i,j)/Rho(i,j)
+      !Rho_  =rir(i,j)
+      !KT_   =KTir(i,j)
+      !OmegaT_=OmegaTir(i,j)
       
       CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
       &(dx_i(KT,i,j)*dx_i(OmegaT,i,j)+dy_i(KT,i,j)*dy_i(OmegaT,i,j)))!!!!
@@ -265,9 +266,9 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       sav1=Sn_X_i(i,j) !dy
       sav2=Sn_Y_i(i,j) !dx
       
-      KT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaK)*&
+      KT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaK/Rho_)*&
       &(sav1*dx_i(KT,i,j)+sav2*dy_i(KT,i,j))
-      OmegaT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaO)*&
+      OmegaT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaO/Rho_)*&
       &(sav1*dx_i(OmegaT,i,j)+sav2*dy_i(OmegaT,i,j))
       
       F_KT(i,j)=F_KT(i,j)-KT_Df
@@ -275,22 +276,27 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       
       F_KT(i-1,j)=F_KT(i-1,j)+KT_Df
       F_OmegaT(i-1,j)=F_OmegaT(i-1,j)+OmegaT_Df
+      end do
+      end do
       
-
+      
+      do j=jb,jm
+      do i=ib,im-1
 ! -   j direction
       ! distance weight for interpolate the interface variables
       alsinv=1./(L_Cell_y(i,j)+L_Cell_y(i,j-1))
       CL=L_Cell_y(i,j)*alsinv
       CR=L_Cell_y(i,j-1)*alsinv
       
-      !Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
+      Rho_ =CL*rho(i,j-1)+CR*rho(i,j)
       MuL_ =CL*Mu_L(i,j-1)+CR*Mu_L(i,j)
-      dist_=CL*distW(i,j-1)+CR*distW(i,j)
-      !KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
-      !OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
-      Rho_  =rjr(i,j)
-      KT_   =KTjr(i,j)
-      OmegaT_=OmegaTjr(i,j)
+      !dist_=CL*distW(i,j-1)+CR*distW(i,j)
+      dist_=distW(i,j)
+      KT_  =CL*KT(i,j-1)/Rho(i,j-1)+CR*KT(i,j)/Rho(i,j)
+      OmegaT_= CL*OmegaT(i,j-1)/Rho(i,j-1)+CR*OmegaT(i,j)/Rho(i,j)
+      !Rho_  =rjr(i,j)
+      !KT_   =KTjr(i,j)
+      !OmegaT_=OmegaTjr(i,j)
       
       CD_KO=max(1e-20,2.0*sigmaO2/Rho_/OmegaT_*&
       &(dx_j(KT,i,j)*dx_j(OmegaT,i,j)+dy_j(KT,i,j)*dy_j(OmegaT,i,j)))!!!!
@@ -306,10 +312,10 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       sav1=Sn_X_j(i,j)
       sav2=Sn_Y_j(i,j)  
       
-      KT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaK)*&
+      KT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaK/Rho_)*&
       &(sav1*dx_j(KT,i,j)+sav2*dy_j(KT,i,j))
       
-      OmegaT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaO)*&
+      OmegaT_Df=(Mu_L(i,j)+Mu_T(i,j)/sigmaO/Rho_)*&
       &(sav1*dx_j(OmegaT,i,j)+sav2*dy_j(OmegaT,i,j))
       
       F_KT(i,j)=F_KT(i,j)-KT_Df
@@ -317,7 +323,11 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       
       F_KT(i,j-1)=F_KT(i,j-1)+KT_Df
       F_OmegaT(i,j-1)=F_OmegaT(i,j-1)+OmegaT_Df
+      end do
+      end do
       
+      do j=jb,jm-1
+      do i=ib,im-1
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !                 SOURCE ITEM
       Vol   = Vcell(i,j)
@@ -344,7 +354,7 @@ real*8 :: Rho_,MuL_,MuT_,KT_,OmegaT_,dist_ !interface vaiables, linear interpola
       KT_Sp=min(MuT_*Vort2(i,j)*Vol,-ProductLimit*KT_Sd)
       
       
-      OmegaT_Sp=(gmt*KT_Sp*Rho_/MuT_)*Vol
+      OmegaT_Sp=(gmt*KT_Sp*Rho_/MuT_)
       OmegaT_Sd=(-beta*Rho_*OmegaT_**2+2.0*(1-F1)*Rho_*sigmaO2*dKdO(i,j)/OmegaT_)*Vol !cross item
       
       
@@ -396,7 +406,7 @@ use main
       end do
       
       i=ib
-      do j=jb,jm-1
+      do j=jb+1,jm-1
       temp=beta(i,j)/Ng(i,j)
       
       F_KT(i,j)    =F_KT(i,j)    *temp
@@ -499,10 +509,12 @@ use main
       
       do j=jb,jm-1
       do i=ib,im-1
+      if(KT(i,j)<0) then
+      write(*,*),'KT<0'
+      end if
+      KT(i,j)       =max(KT(i,j)   +F_KT(i,j),1.0e-10)
+      OmegaT(i,j)   =max(OmegaT(i,j)+F_OmegaT(i,j),1.0e-10)
       
-      KT(i,j)       =KT(i,j)   +F_KT(i,j)
-      OmegaT(i,j)   =OmegaT(i,j)+F_OmegaT(i,j)
-     
       
       end do
       end do

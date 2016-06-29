@@ -27,8 +27,8 @@
 !
 !     start of main iteration loop
 !----------------------------
-      TimeMarch=0 ! LUSGS is the default time marching method
-      select case (TimeMarch)
+      !iTimeMarch=0 ! LUSGS is the default time marching method
+      select case (iTimeMarch)
       case (1)
        pSolver=>RK2
        N_loop=2
@@ -43,7 +43,7 @@
 !       select the Reconstruction method
 !       1: MUSCL; 2: WENO3; 3: WENO5
 !       default is MUSCL
-      iReconstruct=0
+      !iReconstruct=0
       select case (iReconstruct)
       case (1)
         Reconstruct => WENO3_interpolation
