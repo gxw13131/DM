@@ -2,21 +2,24 @@
       subroutine outputuns
 !     ********************
       use main
-      character*7 nam
+      character*100 nam
       integer :: k
       
       real*8 :: Xcar, Ycar,Ucar,Vcar,Pcar,Rcar,entr,Amach,Vmur,TT
       real*8 :: KT_print,OmegaT_print
-        if(mod(n,iprint)==0) then
-        k=(n/iprint)
+        
+        k=Nprint
         if(k<1000) then
          
             if(k<10) then
-               write(nam,'(a,i1,a)') '00',k,'.dat'
+               write(nam,'(a,i1,a)') trim(NameTime)//'_'//trim(NameRiemann)&
+               &//'_'//trim(NameRec)//'_'//'00',k,'.dat'
              else if(k<100) then
-               write(nam,'(a,i2,a)') '0',k,'.dat'
+               write(nam,'(a,i2,a)') trim(NameTime)//'_'//trim(NameRiemann)&
+               &//'_'//trim(NameRec)//'_'//'0',k,'.dat'
              else
-               write(nam,'(i3,a)') k,'.dat'
+               write(nam,'(a,i3,a)') trim(NameTime)//'_'//trim(NameRiemann)&
+               &//'_'//trim(NameRec)//'_',k,'.dat'
             end if
             
             open(30,file=nam)
@@ -52,12 +55,8 @@
      &                  KT_print,OmegaT_print
            end do
            end do
-           close(30)
-        
-        
+           close(30)        
         end if
-        end if
-      
       return
       end
       

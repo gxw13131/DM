@@ -5,15 +5,18 @@
       use main
 !
       integer :: imc,jmc
-      real*8 :: Xcar,Ycar
+      real*8 :: Xcar,Ycar,flag,xx,yy
       real*8 :: e,TT,KE
       real*8 :: temp
       integer :: IO_STATUS
       
-      namelist /step_/ nmax,is_restart,iprint,steady1
-      nmax=30000     !         nmax:  maximum advancing steps;
+      namelist /step_/ nmax,StepSub,dt_physics,dt_print,StepSub,is_restart,iprint,steady1
+      nmax=10000     !         nmax:  maximum advancing steps;
+      StepSub=20       ! LUSGS setup
+      dt_physics =0.001
+      dt_print =0.02
       is_restart=0  !         is_restart: start from very beginning(0)                      or start from a previous computation(1);
-      iprint=3 000    !         iprint: output every iprint steps
+      iprint=1000    !         iprint: output every iprint steps
       steady1=.false.       !         steady1: logical variable, 
                             !.false. the flow is unsteady
       icgl=0        !         icgl=1: gloal time step; =0 local time step
@@ -22,14 +25,16 @@
       irsolver=0 ! Roe
       iTimeMarch=0 ! LUSGS
       iReconstruct=0 ! MUSCL
+      
+       
+      
       open (4,file='D:\\CFD_DM\\DM\\Input\\euler.in',mode='READ',status='unknown')
 !
 !     read in main integer/logical control variables
 !     ----------------------------------------------
 !
       read(4,NML=step_,IOSTAT=IO_STATUS) 
-      read(4,NML=solver_,IOSTAT=IO_STATUS) 
-      
+      read(4,NML=solver_,IOSTAT=IO_STATUS)  
        close(4)
       
       !read(4,*) cp,Gamma,Pr_L
@@ -51,15 +56,15 @@
 !============================
       ! boundary conditions:
       
-      Vx_inlet=1000.0
-      Vy_inlet=0.0
-      p_inlet=101325.0
-      T_inlet=300.0
-      KT_inlet=9.0e-9 !
-      OmegaT_inlet=1.0e-6 !
-      rho_inlet=p_inlet/T_inlet/R_air
-      Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
-      P_out=0.0
+      !Vx_inlet=1000.0
+      !Vy_inlet=0.0
+      !p_inlet=101325.0
+      !T_inlet=300.0
+      !KT_inlet=9.0e-9 !
+      !OmegaT_inlet=1.0e-6 !
+      !rho_inlet=p_inlet/T_inlet/R_air
+      !Mu_inlet=1.458d-6*abs(T_inlet)**1.5/(T_inlet+110.4)
+      !P_out=0.0
       !===============================
 
 !===========end of the input file bl.in=========================
@@ -132,7 +137,7 @@
 !============================================================================      
 !
 !      non-dimensionalization
-!
+!   now all reference variables are set to 1, NO non-dimensionalization
       
        L_ref=1. !x(im,jb)-x(ib,jb)
        Rho_ref=1. !p_Inlet/(T_Inlet*(ga-1.)*cp)
@@ -193,30 +198,47 @@
 !
       if(is_restart.eq.0) n=0
 
-!
+!================================================
 !     initial condition
 !     -----------------
 !
+!!
+!      do i=1,iq
+!      do j=1,jq
 !
-      do i=1,iq
-      do j=1,jq
-
-             ! xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
-              !yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
-!==============================================================
-              ! initialize the flow field with 
-                   rho(i,j)=rho_inlet
-                   vx(i,j)=Vx_inlet
-                   vy(i,j)=Vy_inlet
-                    p(i,j)=p_inlet
-                    
-                    T(i,j)=T_inlet
-                ! initialize turbulence variables
-                    KT(i,j)=KT_inlet*Rho_inlet
-                    OmegaT(i,j)=OmegaT_inlet*Rho_inlet
-                    Mu_L(i,j)=Mu_inlet
-                    Mu_T(i,j)=rho_inlet*KT_inlet/OmegaT_inlet
-                    Mu_E(i,j)=Mu_T(i,j)+Mu_L(i,j)
+!             ! xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
+!              !yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
+!              ! initialize the flow field with 
+!                   rho(i,j)=rho_inlet
+!                   vx(i,j)=Vx_inlet
+!                   vy(i,j)=Vy_inlet
+!                    p(i,j)=p_inlet
+!                    
+!                    T(i,j)=T_inlet
+!                ! initialize turbulence variables
+!                    KT(i,j)=KT_inlet*Rho_inlet
+!                    OmegaT(i,j)=OmegaT_inlet*Rho_inlet
+!                    Mu_L(i,j)=Mu_inlet
+!                    Mu_T(i,j)=rho_inlet*KT_inlet/OmegaT_inlet
+!                    Mu_E(i,j)=Mu_T(i,j)+Mu_L(i,j)
+!      end do
+!      end do
+      do i=1,iq-1
+      do j=1,jq-1
+              xx=0.25*(x(i,j)+x(i,j+1)+x(i+1,j)+x(i+1,j+1))
+              yy=0.25*(y(i,j)+y(i,j+1)+y(i+1,j)+y(i+1,j+1))
+              flag=1.73205*(xx-0.1666667)-yy
+              if(flag.gt.0) then
+                   rho(i,j)=1.4
+                   vx(i,j)=0.
+                   vy(i,j)=0.
+                    p(i,j)=1.0
+              else
+                    rho(i,j)=8.0
+                    vx(i,j)=7.1447
+                    vy(i,j)=-4.125
+                     p(i,j)=116.5
+              endif
       end do
       end do
       
@@ -230,20 +252,25 @@
       rho_vx(i,j)=rho(i,j)*vx(i,j)
       rho_vy(i,j)=rho(i,j)*vy(i,j)
       T(i,j)=p(i,j)/(rho(i,j)*R_air)
-
+      Mu_L(i,j)=1.458d-6*abs(T(i,j))**1.5/(T(i,j)+110.4)
+      Mu_E(i,j)=Mu_L(i,j)
+      !!!!!! 
+      KT(i,j)=1.0
+      OmegaT(i,j)=1.0
+      
       Rho_m1(i,j)=rho(i,j)
       Rho_Et_m1 (i,j)=rho_Et(i,j)
       Rho_vx_m1(i,j)=rho_vx(i,j)
       Rho_vy_m1(i,j)=rho_vy(i,j)
-      KT_m1(i,j)=KT(i,j)
-      OmegaT_m1(i,j)=OmegaT(i,j)
+      !KT_m1(i,j)=KT(i,j)
+      !OmegaT_m1(i,j)=OmegaT(i,j)
       
       Rho_m2(i,j)=rho(i,j)
       Rho_Et_m2(i,j)=rho_Et(i,j)
       Rho_vx_m2(i,j)=rho_vx(i,j)
       Rho_vy_m2(i,j)=rho_vy(i,j)
-      KT_m2(i,j)=KT(i,j)
-      OmegaT_m2(i,j)=OmegaT(i,j)
+      !KT_m2(i,j)=KT(i,j)
+      !OmegaT_m2(i,j)=OmegaT(i,j)
       end do
       end do
            

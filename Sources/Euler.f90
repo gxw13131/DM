@@ -32,12 +32,15 @@
       case (1)
        pSolver=>RK2
        N_loop=2
+       NameTime='RK2'
       case (2)
        pSolver=>RK4
        N_loop=4
+       NameTime='RK4'
       case default
        pSolver=>LUSGS
-       N_loop=1
+       N_loop=StepSub
+       NameTime='LUSGS'
       end select
 !--------------------------------------------
 !       select the Reconstruction method
@@ -47,10 +50,13 @@
       select case (iReconstruct)
       case (1)
         Reconstruct => WENO3_interpolation
+        NameRec='WENO3'
       case (2)
         Reconstruct => WENO5_interpolation
+        NameRec='WENO5'
       case default
         Reconstruct => muscl_interpolation
+        NameRec='MUSCL'
       end select
 !---------------------------------------------
 !       select the Riemann solver
@@ -60,10 +66,13 @@
       select case (irsolver)
       case (1)
         RiemannSolver => inviscid_fluxes_lax
+        NameRiemann='Lax'
       case (2)
         RiemannSolver => inviscid_fluxes_AUSMPWplus
+        NameRiemann='AUSMPWplus'
       case default
         RiemannSolver => inviscid_fluxes_roe
+        NameRiemann='Roe'
       end select
 !================================================================================== 
 !==================================================================================
@@ -78,12 +87,12 @@
 !=====================================================================
 ! begin the main loop
 
-      
+      Nprint=0
       do while(is_End.ne.1)
 100   is_print=0
 !     if is_print==1 output the results
 
-      n=n+1
+      
 !     n: accumulated time step of the computation
       istart=istart+1
       
@@ -91,27 +100,32 @@
           write(*,*) 'now, computing the ',n,'th step'
           write(2,*) 'now, computing the ',n,'th step'
       end if
-      if(n.eq.nmax) is_End=1
+      if((n.eq.nmax).or.(Nprint.eq.10)) is_End=1
       
       is_print=0
-      if(mod(n,iprint).eq.0) is_print=1
-      
+      !if(mod(n,iprint).eq.0) is_print=1
+      if(ttime.gt.dt_print*Nprint) then
+      is_print=1
+      !read(*,*)
+      Nprint=Nprint+1 ! Nprint is initialized to 0, initial flowfield will be printed
+      end if
 !     compute the minimum time step to guarantee CFL condition
       call radius
       call time_step
-!     ============= 
-!     
-     
-      !do nunsloop=1,2
-!       nunsloop: number of step in Runge-Kutta time stepping scheme 
-!
-!     solve Euler equations
+
+!     solve  equations
 !     ------------------
-      do ii=1,N_loop !RK-2 needs 2 loops, RK-4 needs 4 loops, LUSGS needs 1 loops
+      do ii=1,N_loop !RK-2 needs 2 loops, RK-4 needs 4 loops, LUSGS needs StepSub loops
        call solver
+       n=n+1
       end do
-      
-      if(.not.steady1) ttime=ttime+step(ib,jb)
+      if(.not.steady1)then
+          if(iTimeMarch.eq.0) then
+          ttime=ttime+dt_physics
+          else
+           ttime=ttime+step(ib,jb)
+           end if
+      end if
 !        
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! save solution
@@ -123,9 +137,11 @@
       call saveStep
       
       call output
-      if(.not.steady1) call outputuns
+      if((.not.steady1).and.(is_print.eq.1)) call outputuns
             
       end do !
+      Nprint=100
+      call outputuns
 !=========================================================
 !     end of main loop
 !========================================================
@@ -158,8 +174,7 @@
             
       end subroutine
 
-      
-      
+!   compute the RMS and print to screen and file      
       subroutine rms
       use main
       implicit none

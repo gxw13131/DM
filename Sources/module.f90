@@ -1,12 +1,14 @@
       module main
       implicit none
       integer :: i,j
+      
       integer :: iq,jq,ngmax
       real :: EPSILON,EPSILON1,INFINITY,pi
       parameter(iq=405,jq=105,ngmax=max(iq,jq)+5)
       parameter(EPSILON=1.0d-20,EPSILON1=1.0d-10,INFINITY=1.0d20)
       parameter(pi=3.1415926535897932384626)
      
+      character*15 :: NameTime,NameRec,NameRiemann
       
       interface
         subroutine LUSGS
@@ -46,7 +48,9 @@
       integer :: &
      & ib,jb &
      &,im,jm,irsolver,iReconstruct
-     
+     !sub step of LUSGS
+     integer :: StepSub
+     real*8 :: dt_physics,dt_print
       REAL*8 :: &
      & L_ref,V_ref,Rho_ref,T_ref,Ma_ref
       !============================
@@ -140,7 +144,7 @@
      
     integer :: iTimeMarch ! select time marching method 0:LUSGS; 1:RK2; 2:RK4
     integer :: &
-     &nmax,n,is_restart,&
+     &nmax,n,Nprint,is_restart,&
      &ioup,iinp,icgl,iimplicit,idgstart&
      &,nts1p,nunsloop,ninnerloop,is_print,iprint,istart,nb
 

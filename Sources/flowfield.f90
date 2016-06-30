@@ -1099,11 +1099,11 @@ contains
       
       !   Limiting KT OmegaT to guarantee mu_T <= 1e5*mu_L
        
-       KT(i,j)=min(KT(i,j),1.0E5*Mu_L(i,j)*OmegaT(i,j)/Rho(i,j))
-           
-      Mu_T(i,j)=rho(i,j)*KT(i,j)/max(OmegaT(i,j),sqrt(2.0*SSM2(i,j))*F2(i,j))
+      ! KT(i,j)=min(KT(i,j),1.0E5*Mu_L(i,j)*OmegaT(i,j)/Rho(i,j))
+      !     
+      !Mu_T(i,j)=rho(i,j)*KT(i,j)/max(OmegaT(i,j),sqrt(2.0*SSM2(i,j))*F2(i,j))
       !Mu_T(i,j)=10*Mu_L(i,j)
-      Mu_E(i,j)=Mu_L(i,j)+Mu_T(i,j) !for turbulence!!
+      Mu_E(i,j)=Mu_L(i,j)!+Mu_T(i,j) !for turbulence!!
       end do
       end do
      

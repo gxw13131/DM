@@ -20,24 +20,24 @@
 !     set muscl_interpolated value at the cell interfaces on the boundary
       call Reconstruct
 !!!!  TURBULENCE interpolate the interface variables
-      call SST_Reconstruct_MUSCL    !T
+!      call SST_Reconstruct_MUSCL    !T
 !      fix BC flux to guarantee BC
       call BC_FIX
 !     evaluate the inviscid fluxes 
       call RiemannSolver
 !!!! TURBULENCE convective item
-      call SST_Flux_Lax      !T
+ !     call SST_Flux_Lax      !T
       
 !       compute the viscous flux
       call viscous_Flux
 !!!! TURBULENCE compute SS,Vorticity,dKdO 
-      call Derivative2rd    !T
+!      call Derivative2rd    !T
       ! Diffusion+Production+Destruction item
-      call SST_RHS          !T
+!      call SST_RHS          !T
 
       call pSolver
 !!!! TURBULENCE update k and Omega
-      call SST_LUSGS        !T
+ !     call SST_LUSGS        !T
      
 !     update all variables
       call update_variables

@@ -1,10 +1,21 @@
-nmax   = 10000
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+&step_
+nmax   = 300000
+StepSub = 100
+dt_physics = 0.001
+dt_print =0.03
 is_restart = 0
-iprint = 1000
 steady1 = .false.
-icgl = 0
-cfl =0.3
+icgl = 1
+cfl =0.1
 !!!!!!!!!!!!!!!!!!!!!!!!!!!
+&solver_
+! 0: Roe; 1:LAX; 2: AUSMPW+
 irsolver = 0
-iTimeMarch =0
-iReconstruct =0
+!----------------------------
+! 0: LUSGS; 1: RK-2 ;2: RK-4
+iTimeMarch = 0
+!-------------------------------
+! 0: MUSCL; 1: WENO3; 
+iReconstruct =1
+

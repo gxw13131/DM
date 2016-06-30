@@ -368,7 +368,7 @@ subroutine SST_LUSGS
 use main
  use main
       
-      real*8 :: dt_physics=1E30  !physics time step
+      !real*8 :: dt_physics=1E30  !physics time step
       real*8 :: Ng(iq,jq),dt(iq,jq),beta(iq,jq)
       real*8 :: temp
       real*8 :: dKTI,dKTJ,dOmegaTI,dOmegaTJ
